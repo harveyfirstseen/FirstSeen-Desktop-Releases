@@ -1,0 +1,14 @@
+{
+  "version": "10.1.1",
+  "encoding": "base64-chunks-v1",
+  "chunks": [
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.1/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.1/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.1/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.1/part-004.b64"
+  ],
+  "size": 1593342,
+  "sha256": "bc25ebf55448ef09a45ea9f4ac8437279260af87c88447b5b0d5a76a34c27bfe",
+  "published_at": "2026-09-19T06:55:00Z",
+  "notes": "Bridge release enabling the permanent GitHub-based automatic updater for FirstSeen Desktop."
+}
