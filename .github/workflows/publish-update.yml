@@ -1,0 +1,103 @@
+name: Publish FirstSeen Desktop Update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - release-request.json
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release channel
+        uses: actions/checkout@v4
+
+      - name: Build permanent GitHub update payload
+        shell: python
+        run: |
+          import base64, hashlib, json, pathlib, shutil, urllib.request
+          from datetime import datetime, timezone
+
+          root = pathlib.Path(".")
+          request_path = root / "release-request.json"
+          request = json.loads(request_path.read_text(encoding="utf-8"))
+
+          version = str(request["version"]).strip()
+          download_url = str(request["download_url"]).strip()
+          expected_sha = str(request["sha256"]).strip().lower()
+          expected_size = int(request["size"])
+          notes = str(request.get("notes", "")).strip()
+          published_at = str(request.get("published_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
+
+          if not version or not download_url.startswith("https://"):
+              raise SystemExit("Invalid release request.")
+          if len(expected_sha) != 64 or any(c not in "0123456789abcdef" for c in expected_sha):
+              raise SystemExit("Invalid SHA-256 in release request.")
+
+          req = urllib.request.Request(download_url, headers={"User-Agent": "FirstSeen-Desktop-Publisher/1"})
+          with urllib.request.urlopen(req, timeout=120) as response:
+              payload = response.read()
+
+          actual_sha = hashlib.sha256(payload).hexdigest()
+          if len(payload) != expected_size:
+              raise SystemExit(f"Installer size mismatch: got {len(payload)}, expected {expected_size}")
+          if actual_sha != expected_sha:
+              raise SystemExit(f"Installer SHA mismatch: got {actual_sha}, expected {expected_sha}")
+
+          install_dir = root / "installers" / version
+          if install_dir.exists():
+              shutil.rmtree(install_dir)
+          install_dir.mkdir(parents=True, exist_ok=True)
+
+          binary_chunk_bytes = 512 * 1024
+          chunk_urls = []
+          for index, start in enumerate(range(0, len(payload), binary_chunk_bytes), start=1):
+              part = payload[start:start + binary_chunk_bytes]
+              name = f"part-{index:03d}.b64"
+              (install_dir / name).write_text(base64.b64encode(part).decode("ascii") + "\n", encoding="ascii")
+              chunk_urls.append(
+                  f"https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/{version}/{name}"
+              )
+
+          manifest = {
+              "version": version,
+              "encoding": "base64-chunks-v1",
+              "chunks": chunk_urls,
+              "size": len(payload),
+              "sha256": actual_sha,
+              "published_at": published_at,
+              "notes": notes,
+          }
+          (root / "latest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+          request_path.write_text(
+              json.dumps(
+                  {
+                      "status": "published",
+                      "version": version,
+                      "size": len(payload),
+                      "sha256": actual_sha,
+                      "published_at": published_at,
+                  },
+                  indent=2,
+              ) + "\n",
+              encoding="utf-8",
+          )
+
+      - name: Commit published updater files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add latest.json release-request.json installers/
+          if git diff --cached --quiet; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          VERSION="$(python -c "import json; print(json.load(open('latest.json'))['version'])")"
+          git commit -m "Publish FirstSeen Desktop v$VERSION"
+          git push
