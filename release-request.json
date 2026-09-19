@@ -1,8 +1,7 @@
 {
+  "status": "published",
   "version": "10.2.0",
-  "download_url": "https://uc3563cd0e22518a3065f1b0358b.dl.dropboxusercontent.com/cd/0/get/DIZ6Mk2jpaTmMx-k2--2Tat5-mpdRZsshvqbgPrHPcAOE_6Gvuf2niQ7Y7baKAh_3kZVwpC9vlZHAxR3WHrQd-2qIkwClikjlRTHjlFSKBPMkndCNWVKzQhpKlu2cD4HZwXwDSoeeuAWCDBCF5kVcSbDMOP8Njwbls8fIjamZ5313g/file?c_luid=7fe4b514",
   "size": 1608486,
   "sha256": "65cf3bdc7d1509863a41795fb338b3c4995c13fa818422d9768764a8451d7346",
-  "published_at": "2026-09-19T15:00:00Z",
-  "notes": "FirstSeen Desktop V10.2.0: adds Sales Mode with an automatically ranked Call Queue, live lead qualification and business-specific call reasons/scripts, automatic follow-up scheduling, website audit, one-click sales demo creation/opening, follow-up email drafting/sending, proposal handoff, a full sales pipeline, call/conversation/meeting/quote/win metrics, average won value, source and industry conversion analytics, plus discovery questions and a 10-minute meeting guide. Existing CRM, sales, website, client, schedule, AppData and SQLite data are preserved."
+  "published_at": "2026-09-19T15:00:00Z"
 }

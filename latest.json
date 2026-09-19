@@ -1,14 +1,14 @@
 {
-  "version": "10.1.10",
+  "version": "10.2.0",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-004.b64"
   ],
-  "size": 1592723,
-  "sha256": "34127e31607a03742c2f8de34e6d4776acdf2c21b94bb6414c7e17845cc05c74",
-  "published_at": "2026-09-19T13:18:00Z",
-  "notes": "FirstSeen Desktop V10.1.10: removes decorative New labels across the interface, renames What's New to Updates, removes the obsolete Google Places API (New) qualifier, and rewords non-paragraph workflow labels while preserving existing stored status values. Carries forward the V10.1.9 direct Windows installer launch for an end-to-end automatic update test."
+  "size": 1608486,
+  "sha256": "65cf3bdc7d1509863a41795fb338b3c4995c13fa818422d9768764a8451d7346",
+  "published_at": "2026-09-19T15:00:00Z",
+  "notes": "FirstSeen Desktop V10.2.0: adds Sales Mode with an automatically ranked Call Queue, live lead qualification and business-specific call reasons/scripts, automatic follow-up scheduling, website audit, one-click sales demo creation/opening, follow-up email drafting/sending, proposal handoff, a full sales pipeline, call/conversation/meeting/quote/win metrics, average won value, source and industry conversion analytics, plus discovery questions and a 10-minute meeting guide. Existing CRM, sales, website, client, schedule, AppData and SQLite data are preserved."
 }
