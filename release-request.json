@@ -1,7 +1,8 @@
 {
-  "status": "published",
-  "version": "10.1.8",
-  "size": 1592081,
-  "sha256": "7e21f2e40dda7222dab943b75b395f45a0e9e0f62fa970b21dacc39ffbb24473",
-  "published_at": "2026-09-19T12:49:00Z"
+  "version": "10.1.9",
+  "download_url": "https://uc36782a88a52585ecab96d2c1eb.dl.dropboxusercontent.com/cd/0/get/DIZzX0HcZ2sccoN3gWctUc79f49SXlrVlnS3CprBD7dABh7qq9aAcPlCaUNzjd0Oin_b5LVn1Ftaqml4SbFERwtzECQhjkrhRwf1HjFUL3xvPI1HLonYC7QHSZaXqCBJQjphtSrIxgDaDksCgWxmImGChSBeLo0MskW14beg9jpKcA/file?c_luid=7fe4b514",
+  "size": 1591995,
+  "sha256": "b38a620c4ad5f2fc1fcafa2967379c6497780fcaada4c0b00911edeaf2a64de9",
+  "published_at": "2026-09-19T13:09:00Z",
+  "notes": "FirstSeen Desktop V10.1.9: removes the temporary PowerShell/cmd updater handoff and launches the already verified installer directly through Windows ShellExecute. The installer itself now owns the full close, install, installed-version verification and reopen lifecycle. Adds a direct updater launch log at %TEMP%\\FirstSeen-Updater-launch.log. Includes the V10.1.8 Settings sidebar replacement and What's New changes."
 }
