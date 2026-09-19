@@ -1,14 +1,14 @@
 {
-  "version": "10.1.8",
+  "version": "10.1.9",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-004.b64"
   ],
-  "size": 1592081,
-  "sha256": "7e21f2e40dda7222dab943b75b395f45a0e9e0f62fa970b21dacc39ffbb24473",
-  "published_at": "2026-09-19T12:49:00Z",
-  "notes": "FirstSeen Desktop V10.1.8: Settings now truly replaces the entire normal FirstSeen sidebar only while Settings is open. The Settings functions occupy the same sidebar space, the duplicate in-page settings menu is removed from view, and Close Settings restores the normal sidebar and returns to the exact workspace you came from. Also fixes the previously malformed Settings CSS block so the takeover behavior actually applies."
+  "size": 1591995,
+  "sha256": "b38a620c4ad5f2fc1fcafa2967379c6497780fcaada4c0b00911edeaf2a64de9",
+  "published_at": "2026-09-19T13:09:00Z",
+  "notes": "FirstSeen Desktop V10.1.9: removes the temporary PowerShell/cmd updater handoff and launches the already verified installer directly through Windows ShellExecute. The installer itself now owns the full close, install, installed-version verification and reopen lifecycle. Adds a direct updater launch log at %TEMP%\\FirstSeen-Updater-launch.log. Includes the V10.1.8 Settings sidebar replacement and What's New changes."
 }
