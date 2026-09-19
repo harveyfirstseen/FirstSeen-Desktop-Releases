@@ -1,8 +1,7 @@
 {
+  "status": "published",
   "version": "10.1.6",
-  "download_url": "https://ucf2d71dd9f8f0eaf7ecf738b81f.dl.dropboxusercontent.com/cd/0/get/DIalNskg8reJKO2v3nzVnjfSQyKtBLgx24qdB6f1zaLpvYrA0jw8wFhgLBt0qs_QefI8T7qdrCTZ8A15cuL9RiAHTFuXYYD9xAHDXDWbtHJUdjua7uJcaWkHFUla388h-4gDR1zb7c_hY3eGurMc40ziGsurDuV-NX5Jal0MFuP4oQ/file?c_luid=7fe4b514",
   "size": 1598722,
   "sha256": "c1d8ed82d00670be6a2ca41daa2aa8aa2ed19d3253f4e3e9b78cea3b5a408f2d",
-  "published_at": "2026-09-19T12:20:00Z",
-  "notes": "FirstSeen Desktop V10.1.6: Settings now takes over the normal FirstSeen sidebar to give Settings more workspace, adds a Back to FirstSeen exit control, and adds a dedicated What's New page. This release also tests the V10.1.5 automatic close-install-reopen updater handoff."
+  "published_at": "2026-09-19T12:20:00Z"
 }
