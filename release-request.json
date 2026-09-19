@@ -1,7 +1,8 @@
 {
-  "status": "published",
-  "version": "10.1.1",
-  "size": 1593342,
-  "sha256": "bc25ebf55448ef09a45ea9f4ac8437279260af87c88447b5b0d5a76a34c27bfe",
-  "published_at": "2026-09-19T06:55:00Z"
+  "version": "10.1.2",
+  "download_url": "https://uc42811dd7328031ad30b9f7a8cd.dl.dropboxusercontent.com/cd/0/get/DIYAKHkqsgDlPQ4KxhKIBRaggynnLEflcRhQ4C7C6VGtC49qtdzxmIh9B-6znfWYcyQudkuDEwoGxnpffFgwB1hvqHw0EE6Vfc-PJ9RqOJNwF-iMa34cjolohhx9uk2aDDNfb36t5w4mk3KZG8uGmRJIKkJLE1XVk5-HTzbOCQYyLA/file?c_luid=7fe4b514",
+  "size": 1586019,
+  "sha256": "d49a22248a505cb0e996a1953854a6708ee319e74835762d8780efbf428f15d0",
+  "published_at": "2026-09-19T07:13:00Z",
+  "notes": "FirstSeen Desktop V10.1.2: FirstSeen Cloud provider changed to Dropbox in Settings, with Dropbox-backed database backup and recovery controls."
 }
