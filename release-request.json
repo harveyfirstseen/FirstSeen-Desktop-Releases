@@ -1,8 +1,7 @@
 {
+  "status": "published",
   "version": "10.1.5",
-  "download_url": "https://uc4ce0d127bbd980109f5f1da969.dl.dropboxusercontent.com/cd/0/get/DIbh-8f88IRJpj37dSfkaY0YCYBopny57vFNF5XnXIFy50Xa1FQMcxdq4nvrYaP9wxj50FIW10NPXyb61tcxjxy1s-T1TjauVeljNeEDHR0jcEmljj1NQT0WpZwaSW0vr0FSnBR-22Iv3b3XoZz1_eXcttPeHhm_-9UxasQgyLgGYw/file?c_luid=7fe4b514",
   "size": 1588352,
   "sha256": "8d83c27654af7aa2904ae0f91f81e57b5856bca903a006f43a847de5b5aa9ed9",
-  "published_at": "2026-09-19T09:42:00Z",
-  "notes": "FirstSeen Desktop V10.1.5: fixes automatic update handoff/reopen by using a dedicated Windows PowerShell handoff script that waits for the old FirstSeen PID to exit, runs the installer to completion, logs the handoff, and reopens FirstSeen if needed. Includes V10.1.4 My Website and Dropbox Cloud changes."
+  "published_at": "2026-09-19T09:42:00Z"
 }

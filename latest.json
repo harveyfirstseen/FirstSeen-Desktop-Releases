@@ -1,14 +1,14 @@
 {
-  "version": "10.1.4",
+  "version": "10.1.5",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.4/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.4/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.4/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.4/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.5/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.5/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.5/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.5/part-004.b64"
   ],
-  "size": 1588675,
-  "sha256": "93a58622f1d60325c91f34e89aaa472bed97f4f63827b46f8ff74664de952626",
-  "published_at": "2026-09-19T07:48:00Z",
-  "notes": "FirstSeen Desktop V10.1.4: adds My Website to the sidebar and dashboard, opens the built-in FirstSeen Digital website directly in Website Editor, and adds Open Live Site for firstseen.com.au. Retains the V10.1.3 automatic-updater lock fix."
+  "size": 1588352,
+  "sha256": "8d83c27654af7aa2904ae0f91f81e57b5856bca903a006f43a847de5b5aa9ed9",
+  "published_at": "2026-09-19T09:42:00Z",
+  "notes": "FirstSeen Desktop V10.1.5: fixes automatic update handoff/reopen by using a dedicated Windows PowerShell handoff script that waits for the old FirstSeen PID to exit, runs the installer to completion, logs the handoff, and reopens FirstSeen if needed. Includes V10.1.4 My Website and Dropbox Cloud changes."
 }
