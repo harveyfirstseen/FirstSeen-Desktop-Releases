@@ -1,14 +1,14 @@
 {
-  "version": "10.1.6",
+  "version": "10.1.8",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.6/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.6/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.6/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.6/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.8/part-004.b64"
   ],
-  "size": 1598722,
-  "sha256": "c1d8ed82d00670be6a2ca41daa2aa8aa2ed19d3253f4e3e9b78cea3b5a408f2d",
-  "published_at": "2026-09-19T12:20:00Z",
-  "notes": "FirstSeen Desktop V10.1.6: Settings now takes over the normal FirstSeen sidebar to give Settings more workspace, adds a Back to FirstSeen exit control, and adds a dedicated What's New page. This release also tests the V10.1.5 automatic close-install-reopen updater handoff."
+  "size": 1592081,
+  "sha256": "7e21f2e40dda7222dab943b75b395f45a0e9e0f62fa970b21dacc39ffbb24473",
+  "published_at": "2026-09-19T12:49:00Z",
+  "notes": "FirstSeen Desktop V10.1.8: Settings now truly replaces the entire normal FirstSeen sidebar only while Settings is open. The Settings functions occupy the same sidebar space, the duplicate in-page settings menu is removed from view, and Close Settings restores the normal sidebar and returns to the exact workspace you came from. Also fixes the previously malformed Settings CSS block so the takeover behavior actually applies."
 }
