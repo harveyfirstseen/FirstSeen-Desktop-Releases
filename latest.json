@@ -1,14 +1,14 @@
 {
-  "version": "10.1.9",
+  "version": "10.1.10",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.9/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.1.10/part-004.b64"
   ],
-  "size": 1591995,
-  "sha256": "b38a620c4ad5f2fc1fcafa2967379c6497780fcaada4c0b00911edeaf2a64de9",
-  "published_at": "2026-09-19T13:09:00Z",
-  "notes": "FirstSeen Desktop V10.1.9: removes the temporary PowerShell/cmd updater handoff and launches the already verified installer directly through Windows ShellExecute. The installer itself now owns the full close, install, installed-version verification and reopen lifecycle. Adds a direct updater launch log at %TEMP%\\FirstSeen-Updater-launch.log. Includes the V10.1.8 Settings sidebar replacement and What's New changes."
+  "size": 1592723,
+  "sha256": "34127e31607a03742c2f8de34e6d4776acdf2c21b94bb6414c7e17845cc05c74",
+  "published_at": "2026-09-19T13:18:00Z",
+  "notes": "FirstSeen Desktop V10.1.10: removes decorative New labels across the interface, renames What's New to Updates, removes the obsolete Google Places API (New) qualifier, and rewords non-paragraph workflow labels while preserving existing stored status values. Carries forward the V10.1.9 direct Windows installer launch for an end-to-end automatic update test."
 }

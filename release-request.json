@@ -1,8 +1,7 @@
 {
+  "status": "published",
   "version": "10.1.10",
-  "download_url": "https://uc1fef66fa8390acd478bda25a4f.dl.dropboxusercontent.com/cd/0/get/DIYA6utEkcFKW1xYGOz_wWHo10HM2t9dAuD92NHn0O0iDwZxdLF_iquTgnP9X6urL_rWkVED18I-VtARXYEAiq8fHF2vz_zA-L4Sdb-1GKuX4nP_S400nP23jYQE7fsHHk7hqKk9uYffsaE9qPMgpXTS4ktq1v3ZyT1p7AGoN1R3oA/file?c_luid=7fe4b514",
   "size": 1592723,
   "sha256": "34127e31607a03742c2f8de34e6d4776acdf2c21b94bb6414c7e17845cc05c74",
-  "published_at": "2026-09-19T13:18:00Z",
-  "notes": "FirstSeen Desktop V10.1.10: removes decorative New labels across the interface, renames What's New to Updates, removes the obsolete Google Places API (New) qualifier, and rewords non-paragraph workflow labels while preserving existing stored status values. Carries forward the V10.1.9 direct Windows installer launch for an end-to-end automatic update test."
+  "published_at": "2026-09-19T13:18:00Z"
 }
