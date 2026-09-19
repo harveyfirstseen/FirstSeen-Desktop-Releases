@@ -1,7 +1,8 @@
 {
-  "status": "published",
-  "version": "10.1.6",
-  "size": 1598722,
-  "sha256": "c1d8ed82d00670be6a2ca41daa2aa8aa2ed19d3253f4e3e9b78cea3b5a408f2d",
-  "published_at": "2026-09-19T12:20:00Z"
+  "version": "10.1.8",
+  "download_url": "https://uc1c6b37be5b3b40ac8051509e49.dl.dropboxusercontent.com/cd/0/get/DIbS4KnAjOFFx3I5aIfFgX7s3fwSXVo9rRUpsXGGU6jH_dRQsV1frY7cWfevJNYDgCRb2by6wva10bBj3hmdCrJ7vflebQOvfJF-WyfXumAq3SinWGObCh73UXhOwnXHMGTsmk97F6pO1xr9OOfD8B8LF0FLrwFC-Yb7EhRHL17PTg/file?c_luid=7fe4b514",
+  "size": 1592081,
+  "sha256": "7e21f2e40dda7222dab943b75b395f45a0e9e0f62fa970b21dacc39ffbb24473",
+  "published_at": "2026-09-19T12:49:00Z",
+  "notes": "FirstSeen Desktop V10.1.8: Settings now truly replaces the entire normal FirstSeen sidebar only while Settings is open. The Settings functions occupy the same sidebar space, the duplicate in-page settings menu is removed from view, and Close Settings restores the normal sidebar and returns to the exact workspace you came from. Also fixes the previously malformed Settings CSS block so the takeover behavior actually applies."
 }
