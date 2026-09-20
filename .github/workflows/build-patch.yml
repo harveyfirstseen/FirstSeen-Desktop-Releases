@@ -70,6 +70,11 @@ jobs:
 
           runpy.run_path(str(root / "patches" / "v10_2_9.py"), init_globals={"payload_dir": payload_dir, "version": version, "browser_version": browser_version})
 
+          browser_dir = payload_dir / "app" / "src" / "browser-crm"
+          index_path = browser_dir / "index.html"
+          css_path = browser_dir / "app.css"
+          appjs_path = browser_dir / "app.js"
+
           # Build standalone Browser CRM from the modular source.
           index_text = index_path.read_text(encoding="utf-8")
           css_text = css_path.read_text(encoding="utf-8")
