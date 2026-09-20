@@ -1,14 +1,14 @@
 {
-  "version": "10.2.5",
+  "version": "10.2.6",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.6/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.6/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.6/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.6/part-004.b64"
   ],
-  "size": 1654693,
-  "sha256": "ad98777d5e599900bf84803a6c064fdaf3dbf9886da125e0b7687e6248bb59bb",
-  "published_at": "2026-09-20T05:03:00Z",
-  "notes": "FirstSeen Desktop V10.2.5 bundles Browser CRM V2.0 with integrated Twilio browser calling. Any lead with a phone number can be called from anywhere in the CRM, including Want to Contact and outside the Call Queue. V2 adds Dialling/Ringing/Connected states, headset audio through Twilio Voice JS SDK 2.18.5, mute, hang up, DTMF keypad, call timer and existing CRM outcome/follow-up logging. Twilio credentials are configured inside Browser CRM Settings and stored with Windows OS-backed encryption; the browser only receives short-lived access tokens. FirstSeen can test an existing TwiML App and create/update its Voice URL after a TwiML Bin is created."
+  "size": 1647930,
+  "sha256": "f754796941790175820c61ea726e5956824bf07a6e72ccd1acfe8bfd5a00f7d6",
+  "published_at": "2026-09-20T09:05:01.439567Z",
+  "notes": "FirstSeen Desktop V10.2.6 bundles Browser CRM V2.1. When any lead is called from anywhere in the CRM, FirstSeen now opens a lead-aware cold-call brief at the top of the lead drawer with the selected business name, phone, area, business type, website status, Google reputation, a lead-specific reason for calling, and Harvey's approved FirstSeen cold-call script automatically filled with that lead's details. The drawer scrolls to the top when a call starts so the script is immediately visible. Existing Twilio browser calling, Finder decisions, Want to Contact, call outcomes, follow-ups, SQLite data, encrypted Twilio credentials and updater behaviour are preserved."
 }
