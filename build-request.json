@@ -1,11 +1,7 @@
 {
-  "status": "built",
-  "base_version": "10.2.11",
-  "version": "10.2.12",
-  "browser_version": "2.7",
-  "notes": "FirstSeen Desktop V10.2.12 bundles Browser CRM V2.7. Existing CRM leads now have an editable Business Summary describing what the business does, and blank existing summaries are backfilled automatically from the saved business type and area. New manual leads, verified Finder promotions and website-enquiry conversions receive a summary automatically. Want to Contact Finder prospects show an automatic summary before promotion. Lead Overview includes Generate summary and Save summary controls, and the pre-call script panel shows a compact What they do summary. Existing Twilio browser calling, editable call scripts, call outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved.",
-  "retry": 1,
-  "size": 1660352,
-  "sha256": "cd12a84c86f9213d72cc6068a8b8f39152fdb547c28b52f8b06e87ff8ce7f701",
-  "published_at": "2026-09-20T22:52:44.195133Z"
+  "status": "requested",
+  "base_version": "10.2.12",
+  "version": "10.2.13",
+  "browser_version": "2.8",
+  "notes": "FirstSeen Desktop V10.2.13 bundles Browser CRM V2.8. Business summaries are more detailed, using richer service descriptions, service-area context and website-presence context. Existing V10.2.12 auto-generated summaries are upgraded automatically while manually edited summaries are preserved. New leads receive the richer summary format automatically. To use review information conservatively, FirstSeen shows a separate live Google Maps review snapshot with the aggregate star rating and review count plus a source link when available; raw Google review text is not copied into or stored in FirstSeen summaries. Existing Twilio browser calling, editable call scripts, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
 }
