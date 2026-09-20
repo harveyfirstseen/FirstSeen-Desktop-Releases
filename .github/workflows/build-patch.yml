@@ -17,7 +17,7 @@ jobs:
       - name: Checkout release channel
         uses: actions/checkout@v4
 
-      - name: Build FirstSeen Desktop patch
+      - name: Build requested FirstSeen Desktop patch
         shell: python
         run: |
           import base64
@@ -28,16 +28,20 @@ jobs:
           import re
           import shutil
           import struct
+          import textwrap
           import zipfile
           from datetime import datetime, timezone
 
           root = pathlib.Path(".")
           request = json.loads((root / "build-request.json").read_text(encoding="utf-8"))
-          base_version = str(request.get("base_version", "10.2.5")).strip()
+          base_version = str(request["base_version"]).strip()
           version = str(request["version"]).strip()
-          browser_version = str(request.get("browser_version", "2.1")).strip()
+          browser_version = str(request.get("browser_version", "2.2")).strip()
           notes = str(request.get("notes", "")).strip()
           published_at = str(request.get("published_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
+
+          if version != "10.2.7":
+              raise SystemExit("This patch builder currently targets FirstSeen Desktop 10.2.7 only.")
 
           base_dir = root / "installers" / base_version
           parts = sorted(base_dir.glob("part-*.b64"))
@@ -46,8 +50,6 @@ jobs:
 
           old_installer = b"".join(base64.b64decode(p.read_text(encoding="ascii")) for p in parts)
           marker = b"FIRSTSEEN_PAYLOAD_V1"
-          if len(old_installer) < len(marker) + 8:
-              raise SystemExit("Base installer is too small")
           payload_len = struct.unpack("<Q", old_installer[-8:])[0]
           marker_start = len(old_installer) - 8 - payload_len - len(marker)
           if marker_start < 0 or old_installer[marker_start:marker_start + len(marker)] != marker:
@@ -61,128 +63,198 @@ jobs:
           work.mkdir()
           payload_dir = work / "payload"
           payload_dir.mkdir()
-
           with zipfile.ZipFile(io.BytesIO(payload_zip), "r") as zf:
               zf.extractall(payload_dir)
 
-          text_exts = {".ps1",".bat",".cmd",".js",".mjs",".cjs",".json",".html",".htm",".css",".txt",".md",".yml",".yaml",".php"}
-          version_replacements = 0
-          for path in payload_dir.rglob("*"):
-              if not path.is_file() or path.suffix.lower() not in text_exts:
-                  continue
-              try:
-                  text = path.read_text(encoding="utf-8")
-              except UnicodeDecodeError:
-                  continue
-              if base_version in text:
-                  count = text.count(base_version)
-                  text = text.replace(base_version, version)
-                  path.write_text(text, encoding="utf-8")
-                  version_replacements += count
+          browser_dir = payload_dir / "app" / "src" / "browser-crm"
+          appjs_path = browser_dir / "app.js"
+          css_path = browser_dir / "app.css"
+          index_path = browser_dir / "index.html"
+          if not all(p.exists() for p in [appjs_path, css_path, index_path]):
+              raise SystemExit("Browser CRM source files are missing from the base payload")
 
-          browser_js_files = []
-          for path in payload_dir.rglob("*.js"):
-              try:
-                  text = path.read_text(encoding="utf-8")
-              except UnicodeDecodeError:
-                  continue
-              if "function callScript(l)" in text and "function renderCallDock(l)" in text and "function renderDrawer()" in text:
-                  browser_js_files.append(path)
+          s = appjs_path.read_text(encoding="utf-8")
 
-          if not browser_js_files:
-              raise SystemExit("Could not find the Browser CRM JavaScript inside the installer payload")
+          old = "  let callTimer = null;\n  let boardFilter = 'Open';"
+          new = "  let callTimer = null;\n  let callScriptPanelOpen = false;\n  let boardFilter = 'Open';"
+          if old not in s:
+              raise SystemExit("Could not add callScriptPanelOpen state")
+          s = s.replace(old, new, 1)
 
-          browser_dir = browser_js_files[0].parent
-          browser_index = browser_dir / "index.html"
-          browser_css = browser_dir / "app.css"
-          if not browser_index.exists() or not browser_css.exists():
-              raise SystemExit(f"Browser CRM index.html/app.css were not found beside {browser_js_files[0]}")
+          call_pattern = re.compile(r"  function callSpecificReason\(l\)\{.*?\n  function callScript\(l\)\{\n    return `Hey, is this \$\{l\.business\}\?.*?\n  \}\n", re.S)
+          call_replacement = r'''  function callSpecificReason(l){
+          if(!l.website)return 'you don’t appear to have a dedicated website listed';
+          const auditReason=(l.auditReasons||[]).find(Boolean);
+          if(auditReason){
+            const reason=String(auditReason).trim().replace(/[.!?]+$/,'');
+            return reason?reason.charAt(0).toLowerCase()+reason.slice(1):'there may be an opportunity to improve how customers find and contact you online';
+          }
+          if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'your website looks like it could make it easier for customers to understand what you do and get in touch';
+          if(l.rating&&Number(l.reviews||0)>=20)return `you’ve built a strong Google reputation with ${l.reviews} reviews, and I wanted to see how well your website is turning that visibility into enquiries`;
+          return 'I wanted to see how well your online presence is turning local searches into enquiries';
+        }
+        function callWebsiteIssue(l){
+          const auditReason=(l.auditReasons||[]).find(Boolean);
+          if(auditReason)return String(auditReason).trim().replace(/[.!?]+$/,'');
+          if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'the site could make it easier for customers to understand what you do and get in touch';
+          return 'there may be a few areas where the site could turn more local searches into enquiries';
+        }
+        function callScript(l){
+          return `Hey, is this ${l.business}? Harvey here from FirstSeen. I found your business online and noticed ${callSpecificReason(l)}. I build websites for local businesses, and I think I could help. I’m just looking to grab 10 minutes with you sometime this week and show you what I mean. Would you be open to that?`;
+        }
+        '''
+          s, n = call_pattern.subn(lambda m: call_replacement, s, count=1)
+          if n != 1:
+              raise SystemExit("Could not patch call script helpers")
 
-          # Update visible V2.0 labels only in current app source, not historical release notes.
-          app_src = payload_dir / "app" / "src"
-          if app_src.exists():
-              for path in app_src.rglob("*"):
-                  if not path.is_file() or path.suffix.lower() not in text_exts:
-                      continue
-                  try:
-                      src_text = path.read_text(encoding="utf-8")
-                  except UnicodeDecodeError:
-                      continue
-                  if "Browser CRM V2.0" in src_text:
-                      path.write_text(src_text.replace("Browser CRM V2.0", f"Browser CRM V{browser_version}"), encoding="utf-8")
+          inline_marker = "${callLeadId===l.id?renderCallBrief(l):''}<div class=\"drawer-tabs\">"
+          if inline_marker not in s:
+              raise SystemExit("Could not find inline call brief in drawer")
+          s = s.replace(inline_marker, '<div class="drawer-tabs">', 1)
 
-          new_call_script = r'''  function callSpecificReason(l){
-              if(!l.website)return 'you don’t appear to have a dedicated website listed';
-              const auditReason=(l.auditReasons||[]).find(Boolean);
-              if(auditReason){
-                const reason=String(auditReason).trim().replace(/[.!?]+$/,'');
-                return reason?reason.charAt(0).toLowerCase()+reason.slice(1):'there may be an opportunity to improve how customers find and contact you online';
-              }
-              if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'your website looks like it could make it easier for customers to understand what you do and get in touch';
-              if(l.rating&&Number(l.reviews||0)>=20)return `you’ve built a strong Google reputation with ${l.reviews} reviews, and I wanted to see how well your website is turning that visibility into enquiries`;
-              return 'I wanted to see how well your online presence is turning local searches into enquiries';
-            }
-            function callScript(l){
-              return `Hey, is this ${l.business}? Harvey here from FirstSeen. I found your business online and noticed ${callSpecificReason(l)}. I build websites for local businesses, and I think I could help. I’m just looking to grab 10 minutes with you sometime this week and show you what I mean. Would you be open to that?`;
-            }
-            function audit(l){'''
+          brief_pattern = re.compile(r"  function renderCallBrief\(l\)\{.*?\n  \}\n  function renderCallDock\(l\)\{", re.S)
+          brief_replacement = r'''  function scriptSpeech(text){return `<div class="script-speech">“${esc(text)}”</div>`;}
+        function scriptAction(text,tone=''){return `<div class="script-action ${tone}">${esc(text)}</div>`;}
+        function scriptSection(title,body){return `<section class="script-section"><div class="script-section-title">${esc(title)}</div>${body}</section>`;}
+        function renderCallScriptPanel(){
+          const panel=el('callScriptPanel'); if(!panel)return;
+          const l=leadById(callLeadId);
+          if(!callScriptPanelOpen||!l){panel.classList.add('hidden');panel.innerHTML='';return;}
+          const reason=callSpecificReason(l), websiteIssue=callWebsiteIssue(l);
+          panel.innerHTML=`<div class="script-panel-head"><div><div class="script-kicker">FirstSeen cold call</div><h2>${esc(l.business)}</h2><div class="script-lead-meta">${esc(normalizePhone(l.phone)||l.phone)}${l.suburb?` · ${esc(l.suburb)}`:''}</div></div><button class="script-close" data-close-call-script aria-label="Close script">×</button></div>
+            <div class="script-panel-scroll">
+              ${scriptSection('OPENING',scriptSpeech(callScript(l))+scriptAction('Ask the question, then stop talking.','pause'))}
+              ${scriptSection('IF YES',scriptSpeech('Perfect. What day works best for you?')+scriptAction('YES → Book the time.','yes'))}
+              ${scriptSection('WHAT DO YOU ACTUALLY DO?',scriptSpeech('I build strong websites for local businesses that want a stronger online presence and more enquiries. I just want 10 minutes to show you what I think could work for your business.')+scriptSpeech('Would you be open to that?'))}
+              ${scriptSection('HOW MUCH DOES IT COST?',scriptSpeech('It depends on what you actually need, so I don’t want to throw a random number at you. If you give me 10 minutes, I can show you what I’d recommend and what it would cost.')+scriptSpeech('Would you be open to that?'))}
+              ${scriptSection('I’M NOT INTERESTED',scriptSpeech('No problem. Is that because you’re happy with what you’ve already got, or you just don’t see a need for a website?')+scriptAction('IF THEY GIVE A REASON: Respond briefly to that reason, then:')+scriptSpeech('Fair enough. If I could show you something relevant in 10 minutes, would you be open to having a look?')+scriptAction('YES → Book the time.','yes')+scriptAction('NO → End the call.','no'))}
+              ${scriptSection('WE DON’T NEED A WEBSITE',scriptSpeech(`That’s fair. I noticed ${reason}, which is why I reached out. I’m not saying you need one — I’d just like to show you where I think there could be an opportunity.`)+scriptSpeech('Would you be open to a quick 10-minute look?'))}
+              ${scriptSection('WE ALREADY GET ENOUGH WORK',scriptSpeech('That makes sense. The goal wouldn’t necessarily be just more work — it could also be helping you look more established online and making it easier for customers to find the right information.')+scriptSpeech('Would it still be worth 10 minutes to have a look?'))}
+              ${scriptSection('WE ALREADY HAVE A WEBSITE',scriptSpeech(`Yeah, I saw that. I’m reaching out because I noticed ${websiteIssue}. I think there are a few things that could be improved, and I’d like to show you what I mean.`)+scriptSpeech('Would you be open to 10 minutes sometime this week?'))}
+              ${scriptSection('SEND ME AN EMAIL',scriptSpeech('Yeah, I can do that. I’ll keep it short. What’s the best email for you?')+scriptSpeech('Would it be alright if I give you a quick call after you’ve had a look?')+scriptAction('YES → Set follow-up.','yes')+scriptAction('NO → Send email and leave it there.','no'))}
+              ${scriptSection('I’M BUSY',scriptSpeech('No problem. When would be a better time for me to call you back?')+scriptAction('Get a specific day/time.','pause'))}
+              ${scriptSection('CALL ME LATER',scriptSpeech('Sure. What day and time works best?')+scriptAction('Book callback.','yes'))}
+            </div>`;
+          panel.classList.remove('hidden');
+          const close=panel.querySelector('[data-close-call-script]'); if(close)close.onclick=()=>{callScriptPanelOpen=false;renderCallScriptPanel();};
+        }
+        function renderCallDock(l){'''
+          s, n = brief_pattern.subn(lambda m: brief_replacement, s, count=1)
+          if n != 1:
+              raise SystemExit("Could not replace inline call brief with left panel")
 
-          new_call_ui = r'''  function renderCallBrief(l){
-              const reason=callSpecificReason(l);
-              const website=!l.website?'No website listed':((l.websiteQuality||'').trim()||'Website saved');
-              const reputation=l.rating?`${l.rating}★ · ${l.reviews||0} reviews`:'No Google rating saved';
-              return `<div class="call-brief"><div class="call-brief-head"><div><div class="eyebrow">Cold call script</div><strong>${esc(l.business)}</strong></div><span class="call-brief-ready">Ready to call</span></div><div class="call-brief-grid"><div><label>Business</label><span>${esc(l.business)}</span></div><div><label>Phone</label><span>${esc(normalizePhone(l.phone)||l.phone)}</span></div><div><label>Area</label><span>${esc(l.suburb||l.address||'—')}</span></div><div><label>Business type</label><span>${esc(l.category||'—')}</span></div><div><label>Website</label><span>${esc(website)}</span></div><div><label>Google</label><span>${esc(reputation)}</span></div></div><div class="call-brief-reason"><strong>Specific reason:</strong> ${esc(reason)}</div><div class="call-script-copy">${esc(callScript(l))}</div><div class="call-script-tip">Keep it short. Ask the question, then pause and let them answer.</div></div>`;
-            }
-            function renderCallDock(l){
-              const statusLabel={idle:'Ready',starting:'Starting Twilio…',ready:'Ready',dialling:'Dialling…',ringing:'Ringing…',connected:'Connected',ended:'Call ended',error:'Call error'}[voice.state]||voice.state;
-              const twilioActive=Boolean(connection.twilio); const active=Boolean(voice.call);
-              return `<div class="call-dock"><div class="call-dock-top"><div><strong>${twilioActive?'Browser call':'Call tracking'}</strong><div class="tiny">${esc(l.business)} · ${esc(normalizePhone(l.phone)||l.phone)}</div></div><div class="call-status-stack"><span class="call-state ${esc(voice.state)}">${esc(twilioActive?statusLabel:'Device dialler')}</span><div class="call-timer" id="callTimer">${callStart?'00:00':'--:--'}</div></div></div>${voice.error?`<div class="call-error">${esc(voice.error)}</div>`:''}<div class="call-controls">${twilioActive?`<button data-call-control="mute" ${active?'':'disabled'}>${voice.muted?'Unmute':'Mute'}</button><button data-call-control="keypad" ${active?'':'disabled'}>Keypad</button><button class="danger-call" data-call-control="hangup" ${active||['dialling','ringing','connected'].includes(voice.state)?'':'disabled'}>Hang up</button>`:'<span class="tiny">Twilio is not connected. FirstSeen can still open your device dialler.</span>'}</div>${voice.keypad&&active?`<div class="dtmf-grid">${['1','2','3','4','5','6','7','8','9','*','0','#'].map(d=>`<button data-dtmf="${d}">${d}</button>`).join('')}</div>`:''}<div class="call-outcome-label">Finish by choosing the call outcome</div><div class="outcome-grid">${['No Answer','Spoke To','Send Info','Follow Up','Meeting Booked','Quote Sent','Won','Lost'].map(o=>`<button data-outcome="${o}">${o}</button>`).join('')}</div></div>`;
-            }
-            function closeDrawer(){'''
+          start_old = "callLeadId=id;callStart=null;clearInterval(callTimer);callTimer=null;voice.error='';voice.state=connection.twilio?'starting':'idle';openLead(id);renderDrawer();el('leadDrawer').scrollTop=0;"
+          start_new = "callLeadId=id;callStart=null;clearInterval(callTimer);callTimer=null;voice.error='';voice.state=connection.twilio?'starting':'idle';callScriptPanelOpen=true;openLead(id);renderDrawer();renderCallScriptPanel();"
+          if start_old not in s:
+              raise SystemExit("Could not patch startCall")
+          s = s.replace(start_old, start_new, 1)
 
+          finish_old = "clearInterval(callTimer);callTimer=null;callLeadId=null;callStart=null;voice.call=null;voice.state='idle';voice.error='';voice.muted=false;voice.keypad=false;render();if(activeLeadId)renderDrawer();"
+          finish_new = "clearInterval(callTimer);callTimer=null;callLeadId=null;callStart=null;callScriptPanelOpen=false;voice.call=null;voice.state='idle';voice.error='';voice.muted=false;voice.keypad=false;renderCallScriptPanel();render();if(activeLeadId)renderDrawer();"
+          if finish_old not in s:
+              raise SystemExit("Could not patch finishCall")
+          s = s.replace(finish_old, finish_new, 1)
+          appjs_path.write_text(s, encoding="utf-8")
+
+          h = index_path.read_text(encoding="utf-8")
+          h = h.replace("<title>FirstSeen CRM V2</title>", "<title>FirstSeen CRM V2.2</title>")
+          h = h.replace("Browser CRM V2.1", "Browser CRM V2.2")
+          drawer_marker = '  <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>\n'
+          if drawer_marker not in h:
+              raise SystemExit("Could not add call script panel to browser index")
+          h = h.replace(drawer_marker, '  <aside id="callScriptPanel" class="call-script-panel hidden"></aside>\n\n' + drawer_marker, 1)
+          index_path.write_text(h, encoding="utf-8")
+
+          css = css_path.read_text(encoding="utf-8").rstrip()
           extra_css = r'''
-          /* Browser CRM V2.1 — lead-aware cold call script */
-          .call-brief{margin:14px 0 12px;border:1px solid #d9def8;background:#f8f9ff;border-radius:12px;padding:13px}.call-brief-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.call-brief-head strong{font-size:15px}.call-brief-ready{font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.05em;background:#e7f8ef;color:#146c43;border:1px solid #c4ead6;border-radius:999px;padding:5px 8px}.call-brief-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}.call-brief-grid>div{border:1px solid #e3e6f3;background:#fff;border-radius:8px;padding:8px;min-width:0}.call-brief-grid label{display:block;color:#7a8498;font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:.04em}.call-brief-grid span{display:block;font-size:11px;font-weight:700;margin-top:3px;overflow-wrap:anywhere}.call-brief-reason{font-size:11px;line-height:1.45;margin-top:10px;color:#4b5563}.call-script-copy{margin-top:9px;background:#111827;color:#fff;border-radius:10px;padding:12px;font-size:12px;line-height:1.55}.call-script-tip{font-size:10px;color:#667085;margin-top:7px;font-weight:650}
-          @media(max-width:640px){.call-brief-grid{grid-template-columns:1fr 1fr}}
-          '''
+        /* Browser CRM V2.2 — standalone left-side cold-call script */
+        .call-script-panel{position:fixed;left:136px;top:16px;bottom:16px;width:min(460px,calc(100vw - 168px));z-index:65;background:#fff;border:1px solid #dfe3ec;border-radius:16px;box-shadow:0 22px 70px rgba(20,28,50,.24);display:flex;flex-direction:column;overflow:hidden}.call-script-panel.hidden{display:none}.script-panel-head{flex:0 0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 18px 15px;border-bottom:1px solid #e8ebf2;background:#fff}.script-kicker{font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}.script-panel-head h2{font-size:21px;line-height:1.15;margin:0;color:#171b26}.script-lead-meta{font-size:11px;color:#6b7280;margin-top:5px;font-weight:650}.script-close{border:1px solid #dfe3ec;background:#fff;color:#4b5563;width:34px;height:34px;border-radius:9px;font-size:22px;line-height:1;cursor:pointer;flex:0 0 auto}.script-close:hover{background:#f5f6f9}.script-panel-scroll{padding:8px 18px 22px;overflow:auto;scrollbar-width:thin}.script-section{padding:16px 0;border-bottom:1px solid #e9ecf2}.script-section:last-child{border-bottom:0}.script-section-title{font-size:12px;line-height:1.25;font-weight:900;letter-spacing:.035em;color:#111827;margin-bottom:10px}.script-speech{font-size:16px;line-height:1.58;color:#171b26;font-weight:560;margin:0 0 10px}.script-speech:last-child{margin-bottom:0}.script-action{font-size:11px;line-height:1.4;font-weight:800;color:#667085;background:#f4f6f9;border-radius:8px;padding:7px 9px;margin-top:7px}.script-action.pause{color:#7a5410;background:#fff7e6}.script-action.yes{color:#11613e;background:#eaf8f1}.script-action.no{color:#8c3030;background:#fff0f0}
+        @media(max-width:1000px){.call-script-panel{left:92px;width:min(440px,calc(100vw - 116px))}}
+        @media(max-width:760px){.call-script-panel{left:10px;right:10px;top:10px;bottom:10px;width:auto;z-index:95}.script-panel-head{padding:15px}.script-panel-scroll{padding:6px 15px 18px}.script-speech{font-size:15px}}
+        '''
+          if "Browser CRM V2.2 — standalone left-side cold-call script" not in css:
+              css += "\n\n" + textwrap.dedent(extra_css).strip() + "\n"
+          css_path.write_text(css, encoding="utf-8")
 
-          for path in browser_js_files:
+          current_files = [
+              payload_dir / "app" / "package.json",
+              payload_dir / "app" / "README.md",
+              payload_dir / "app" / "docs" / "WINDOWS_INSTALLER_V10.md",
+              payload_dir / "app" / "installer" / "README.md",
+              payload_dir / "app" / "installer" / "install.ps1",
+              payload_dir / "install.ps1",
+              payload_dir / "app" / "src" / "renderer" / "index.html",
+              payload_dir / "app" / "src" / "renderer" / "app.js",
+          ]
+          for path in current_files:
               text = path.read_text(encoding="utf-8")
-              call_pattern = re.compile(r"  function callScript\(l\)\{\n.*?\n  \}\n  function audit\(l\)\{", re.S)
-              text, n_call = call_pattern.subn(lambda m: new_call_script, text, count=1)
-              if n_call != 1:
-                  raise SystemExit(f"Could not patch callScript in {path}")
-
-              dock_pattern = re.compile(r"  function renderCallDock\(l\)\{\n.*?\n  \}\n  function closeDrawer\(\)\{", re.S)
-              text, n_dock = dock_pattern.subn(lambda m: new_call_ui, text, count=1)
-              if n_dock != 1:
-                  raise SystemExit(f"Could not patch renderCallDock in {path}")
-
-              drawer_marker = '<div class="drawer-tabs">'
-              if drawer_marker not in text:
-                  raise SystemExit(f"Could not find drawer tabs in {path}")
-              text = text.replace(drawer_marker, '${callLeadId===l.id?renderCallBrief(l):\'\'}<div class="drawer-tabs">', 1)
-
-              call_open = "openLead(id);renderDrawer();"
-              if call_open not in text:
-                  raise SystemExit(f"Could not find startCall drawer opening in {path}")
-              text = text.replace(call_open, "openLead(id);renderDrawer();el('leadDrawer').scrollTop=0;", 1)
-
+              text = text.replace(base_version, version)
               path.write_text(text, encoding="utf-8")
 
-          css_text = browser_css.read_text(encoding="utf-8")
-          if "lead-aware cold call script" not in css_text:
-              css_text = css_text.rstrip() + "\n\n" + extra_css.strip() + "\n"
-              browser_css.write_text(css_text, encoding="utf-8")
+          package_path = payload_dir / "app" / "package.json"
+          package_data = json.loads(package_path.read_text(encoding="utf-8"))
+          package_data["version"] = version
+          package_data["description"] = "FirstSeen Digital desktop operating app - V10.2.7 adds a standalone left-side cold-call script panel in Browser CRM V2.2 for fast live call reading."
+          package_path.write_text(json.dumps(package_data, indent=2) + "\n", encoding="utf-8")
 
-          # Build a clean standalone Browser CRM V2.1 from the same modular source bundled in Desktop.
-          index_text = browser_index.read_text(encoding="utf-8").replace("Browser CRM V2.0", f"Browser CRM V{browser_version}")
-          js_text = browser_js_files[0].read_text(encoding="utf-8")
-          css_text = browser_css.read_text(encoding="utf-8")
-          index_text = re.sub(r'<link[^>]+href=["\\\'](?:\\./)?app\\.css(?:\\?[^"\\\']*)?["\\\'][^>]*>', '', index_text, flags=re.I)
-          index_text = re.sub(r'<script[^>]+src=["\\\'](?:\\./)?app\\.js(?:\\?[^"\\\']*)?["\\\'][^>]*>\\s*</script>', '', index_text, flags=re.I)
-          if "</head>" not in index_text or "</body>" not in index_text:
-              raise SystemExit("Browser CRM index.html is missing head/body closing tags")
+          readme_path = payload_dir / "app" / "README.md"
+          readme = readme_path.read_text(encoding="utf-8")
+          readme = readme.replace(
+              "V10.2.7 adds Browser CRM V2 with integrated Twilio browser calling while preserving the live SQLite CRM bridge, Finder shortlist and pinned navigation.",
+              "V10.2.7 adds Browser CRM V2.2 with a dedicated left-side cold-call script panel while preserving Twilio browser calling, the live SQLite CRM bridge, Finder shortlist and pinned navigation."
+          )
+          readme_path.write_text(readme, encoding="utf-8")
+
+          browser_readme_path = browser_dir / "README.md"
+          browser_readme = browser_readme_path.read_text(encoding="utf-8").replace("FirstSeen Browser CRM V2.1", "FirstSeen Browser CRM V2.2")
+          if "V2.2 opens the finalized FirstSeen cold-call script" not in browser_readme:
+              browser_readme = browser_readme.rstrip() + "\n\nV2.2 opens the finalized FirstSeen cold-call script in its own left-side panel whenever a lead is called. The panel is separate from the lead drawer and uses a simple spoken-script + objection format for live reading.\n"
+          browser_readme_path.write_text(browser_readme, encoding="utf-8")
+
+          renderer_index = payload_dir / "app" / "src" / "renderer" / "index.html"
+          ri = renderer_index.read_text(encoding="utf-8")
+          old_hero = '''                  <h3>Browser CRM V2 + Twilio calling</h3>
+                  <p>Browser CRM V2 turns FirstSeen into a browser softphone. Call any lead from inside the CRM, use your headset, mute or hang up, send keypad tones, then record the outcome straight back to the same SQLite lead and follow-up workflow.</p>'''
+          new_hero = '''                  <h3>Browser CRM V2.2 + left-side call script</h3>
+                  <p>When you call a lead, FirstSeen now opens the finalized cold-call script in its own panel on the left side of the browser. The selected business and call reason are filled in automatically so the script is easy to read while the call controls stay separate on the right.</p>'''
+          if old_hero in ri:
+              ri = ri.replace(old_hero, new_hero, 1)
+          old_grid = '''                <article class="settings-card whats-new-card"><strong>Browser softphone</strong><span>Twilio Voice now powers outbound calls directly inside Browser CRM V2 with live Dialling, Ringing, Connected and Ended states.</span></article>
+                <article class="settings-card whats-new-card"><strong>Call controls</strong><span>Mute, hang up and send keypad/DTMF tones without leaving the lead you are working on.</span></article>
+                <article class="settings-card whats-new-card"><strong>Secure Twilio setup</strong><span>Connect Account SID, API Key, TwiML App and caller number from Browser CRM Settings. Secrets are stored with Windows OS-backed encryption.</span></article>
+                <article class="settings-card whats-new-card"><strong>Call any lead</strong><span>Leads remain callable from Leads, Want to Contact, Call Queue, Pipeline, Dashboard, Today and the universal Call Any Lead picker.</span></article>
+                <article class="settings-card whats-new-card"><strong>CRM stays in sync</strong><span>Call outcomes still update pipeline stages, last contact, follow-up tasks and lead activity in the same Desktop SQLite database.</span></article>
+                <article class="settings-card whats-new-card"><strong>Twilio App helper</strong><span>FirstSeen can test an existing TwiML App and create or update its Voice URL after you add a TwiML Bin in Twilio.</span></article>'''
+          new_grid = '''                <article class="settings-card whats-new-card"><strong>Left-side call script</strong><span>The live cold-call script now appears in its own fixed panel on the left, separate from the lead drawer and Twilio controls.</span></article>
+                <article class="settings-card whats-new-card"><strong>Easy read-out layout</strong><span>Large spoken blocks, clear separators, uppercase objection headings and short action cues match the finalized cold-calling script format.</span></article>
+                <article class="settings-card whats-new-card"><strong>Lead-aware wording</strong><span>Business name, specific reason for calling and website issue are inserted automatically from the selected lead.</span></article>
+                <article class="settings-card whats-new-card"><strong>Full objection flow</strong><span>Price, not interested, no website needed, enough work, existing website, email, busy and call-later responses are all visible while you talk.</span></article>
+                <article class="settings-card whats-new-card"><strong>Call any lead</strong><span>The script opens whether you call from Leads, Want to Contact, Call Queue, Pipeline, Dashboard, Today or Call Any Lead.</span></article>
+                <article class="settings-card whats-new-card"><strong>Calling stays intact</strong><span>Twilio headset calling, mute, hang up, keypad, outcomes, follow-ups and live SQLite CRM syncing are preserved.</span></article>'''
+          if old_grid in ri:
+              ri = ri.replace(old_grid, new_grid, 1)
+          renderer_index.write_text(ri, encoding="utf-8")
+
+          release_notes = payload_dir / "app" / "docs" / "RELEASE_NOTES_V10_2_7.md"
+          release_notes.write_text(
+              "# FirstSeen Desktop V10.2.7\n\n"
+              "V10.2.7 is a focused Browser CRM calling update.\n\n"
+              "- Browser CRM moves to V2.2.\n"
+              "- Pressing Call on any lead opens a dedicated cold-call script panel on the left side of the browser.\n"
+              "- The script panel is independent from the lead drawer and call controls.\n"
+              "- The selected lead's business name and specific reason are inserted automatically.\n"
+              "- The layout follows the finalized cold-calling script format: clear spoken blocks, separators, uppercase objection headings, and short YES / NO / callback actions.\n"
+              "- Includes the finalized objection flow for price, interest, website need, enough work, existing website, email, busy, and call-later responses.\n"
+              "- Existing Twilio browser calling, outcomes, follow-ups, Finder shortlist, live SQLite CRM bridge and updater behaviour are preserved.\n",
+              encoding="utf-8"
+          )
+
+          # Build standalone Browser CRM from the modular source.
+          index_text = index_path.read_text(encoding="utf-8")
+          css_text = css_path.read_text(encoding="utf-8")
+          js_text = appjs_path.read_text(encoding="utf-8")
+          index_text = re.sub(r'<link[^>]+href=["\'](?:\./)?app\.css["\'][^>]*>', '', index_text, flags=re.I)
+          index_text = re.sub(r'<script[^>]+src=["\'](?:\./)?app\.js["\'][^>]*>\s*</script>', '', index_text, flags=re.I)
           index_text = index_text.replace("</head>", "<style>\n" + css_text + "\n</style>\n</head>", 1)
           index_text = index_text.replace("</body>", "<script>\n" + js_text + "\n</script>\n</body>", 1)
           browser_html = index_text.encode("utf-8")
@@ -204,22 +276,18 @@ jobs:
           out.mkdir()
 
           installer_name = f"FirstSeen-Setup-{version}.exe"
-          installer_path = out / installer_name
-          installer_path.write_bytes(installer)
+          (out / installer_name).write_bytes(installer)
 
           source_name = f"FirstSeen_Desktop_V{version.replace('.', '_')}.zip"
-          source_path = out / source_name
-          with zipfile.ZipFile(source_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+          with zipfile.ZipFile(out / source_name, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
               for path in sorted(payload_dir.rglob("*")):
                   if path.is_file():
                       zf.write(path, path.relative_to(payload_dir).as_posix())
 
           browser_standalone_name = f"FirstSeen_CRM_Browser_V{browser_version.replace('.', '_')}_Standalone.html"
-          browser_standalone = out / browser_standalone_name
-          browser_standalone.write_bytes(browser_html)
+          (out / browser_standalone_name).write_bytes(browser_html)
           browser_zip_name = f"FirstSeen_CRM_Browser_V{browser_version.replace('.', '_')}.zip"
-          browser_zip = out / browser_zip_name
-          with zipfile.ZipFile(browser_zip, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+          with zipfile.ZipFile(out / browser_zip_name, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
               zf.writestr(browser_standalone_name, browser_html)
 
           installer_sha = hashlib.sha256(installer).hexdigest()
@@ -244,7 +312,7 @@ jobs:
               "size": installer_size,
               "sha256": installer_sha,
               "published_at": published_at,
-              "notes": notes
+              "notes": notes,
           }
           (root / "latest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
           (root / "release-request.json").write_text(json.dumps({
@@ -252,25 +320,21 @@ jobs:
               "version": version,
               "size": installer_size,
               "sha256": installer_sha,
-              "published_at": published_at
+              "published_at": published_at,
           }, indent=2) + "\n", encoding="utf-8")
 
           request["status"] = "built"
           request["size"] = installer_size
           request["sha256"] = installer_sha
           request["published_at"] = published_at
-          request["browser_files_patched"] = [str(p.relative_to(payload_dir)) for p in browser_js_files] + [str(browser_css.relative_to(payload_dir)), str(browser_index.relative_to(payload_dir))]
-          request["version_replacements"] = version_replacements
           (root / "build-request.json").write_text(json.dumps(request, indent=2) + "\n", encoding="utf-8")
 
           print(f"Built {installer_name}: {installer_size} bytes, {installer_sha}")
-          print(f"Patched Browser CRM JavaScript files: {len(browser_js_files)}")
-          print(f"Desktop version replacements: {version_replacements}")
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FirstSeen-10.2.6-release
+          name: FirstSeen-10.2.7-release
           path: release-output/*
           if-no-files-found: error
           retention-days: 30
