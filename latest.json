@@ -1,14 +1,14 @@
 {
-  "version": "10.2.3",
+  "version": "10.2.4",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-004.b64"
   ],
-  "size": 1630456,
-  "sha256": "06b628e0bb77a6d42c61e59732e9fafcc2905bc6f6a79fcfee4018ebec2336df",
-  "published_at": "2026-09-20T04:45:00Z",
-  "notes": "FirstSeen Desktop V10.2.3: Browser CRM adds a dedicated Want to Contact sidebar view for Google Finder businesses marked \ud83d\udc4d Lead. These leads appear even when no notes were written and before they are promoted into the permanent CRM. They can be called directly without entering the Call Queue, call attempts are written back to the Finder decision record, and Call Intel can be refreshed from Google Places. Existing CRM, SQLite, clients, websites and Finder decisions are preserved."
+  "size": 1632992,
+  "sha256": "9b41219dbae7c8694a84c266472c6662c18b37f91e675bb1ef0637d0027fe603",
+  "published_at": "2026-09-20T04:51:00Z",
+  "notes": "FirstSeen Desktop V10.2.4: Browser CRM V1.6 keeps the navigation sidebar pinned to the screen while the workspace scrolls. Full desktop keeps the 220px sidebar fixed, compact desktop keeps the icon sidebar fixed, and mobile keeps navigation as a sticky horizontal strip. Existing CRM, Finder decisions, SQLite data, clients and websites are preserved."
 }
