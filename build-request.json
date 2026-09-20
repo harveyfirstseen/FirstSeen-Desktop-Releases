@@ -1,10 +1,7 @@
 {
-  "status": "built",
-  "base_version": "10.2.9",
-  "version": "10.2.10",
-  "browser_version": "2.5",
-  "notes": "FirstSeen Desktop V10.2.10 bundles Browser CRM V2.5. Cold-call script saving has been reworked for reliability: save-button clicks use a stable panel handler, every save is mirrored immediately to dedicated browser storage, Desktop-connected saves are also written to SQLite and immediately read back to verify persistence, and the UI clearly reports whether the save reached Desktop or only the browser backup. Manual line breaks now persist correctly, and the opening script remains one sentence per line. Existing Twilio calling, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved.",
-  "size": 1656225,
-  "sha256": "ea6d30324915a697b1f5c74c4c6f4c66280bf7b8745e3eb478e5f90b533deb8c",
-  "published_at": "2026-09-20T21:45:44.091140Z"
+  "status": "requested",
+  "base_version": "10.2.10",
+  "version": "10.2.11",
+  "browser_version": "2.6",
+  "notes": "FirstSeen Desktop V10.2.11 bundles Browser CRM V2.6. Opening or clicking a prospect now opens the left-side cold-call script immediately at the same time as the prospect drawer and Call button, so the script can be read or edited before dialling. Pressing Call on an already-open prospect preserves the current script and unsaved edits instead of reloading it. If the call finishes while the prospect remains open, the script stays available. Existing Twilio browser calling, script editing/saving, call outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
 }
