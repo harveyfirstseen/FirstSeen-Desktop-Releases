@@ -1,14 +1,14 @@
 {
-  "version": "10.2.8",
+  "version": "10.2.9",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.8/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.8/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.8/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.8/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-004.b64"
   ],
-  "size": 1653807,
-  "sha256": "1a2d5626c86ac81dee10255aa6200b2715956f94858d3d20c4bb8985d42246ae",
-  "published_at": "2026-09-20T10:02:40.121061Z",
-  "notes": "FirstSeen Desktop V10.2.8 bundles Browser CRM V2.3. The left-side cold-call script is now directly editable during a call. Buttons at the bottom let you Save for the prospect, Save for all prospects, or Don't save. Prospect-only saves persist just for that lead; Save for all prospects stores the edited script as the default while still substituting each lead's business name, call reason and website issue. Desktop-connected script preferences persist in the existing SQLite app_settings table. Existing Twilio calling, outcomes, follow-ups, Finder shortlist, live SQLite CRM data and updater behaviour are preserved."
+  "size": 1654985,
+  "sha256": "7a08bf08148c287f166ab61f70bd3795d13b3d5cb3c95da0ca876467d135bc35",
+  "published_at": "2026-09-20T10:18:58.110975Z",
+  "notes": "FirstSeen Desktop V10.2.9 bundles Browser CRM V2.4. This fixes the editable cold-call script save controls, adds clear success/failure feedback, preserves prospect-only and all-prospect persistence, and formats the large opening script with every sentence on its own line for easier live reading. Existing Twilio browser calling, call outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
 }
