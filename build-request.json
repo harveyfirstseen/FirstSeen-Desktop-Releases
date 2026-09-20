@@ -3,5 +3,6 @@
   "base_version": "10.2.8",
   "version": "10.2.9",
   "browser_version": "2.4",
-  "notes": "FirstSeen Desktop V10.2.9 bundles Browser CRM V2.4. This fixes the editable cold-call script save controls, adds clear success/failure feedback, preserves prospect-only and all-prospect persistence, and formats the large opening script with every sentence on its own line for easier live reading. Existing Twilio browser calling, call outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.2.9 bundles Browser CRM V2.4. This fixes the editable cold-call script save controls, adds clear success/failure feedback, preserves prospect-only and all-prospect persistence, and formats the large opening script with every sentence on its own line for easier live reading. Existing Twilio browser calling, call outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved.",
+  "retry": 1
 }
