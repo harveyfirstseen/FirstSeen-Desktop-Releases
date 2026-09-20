@@ -1,7 +1,10 @@
 {
-  "status": "requested",
+  "status": "built",
   "base_version": "10.2.7",
   "version": "10.2.8",
   "browser_version": "2.3",
-  "notes": "FirstSeen Desktop V10.2.8 bundles Browser CRM V2.3. The left-side cold-call script is now directly editable during a call. Buttons at the bottom let you Save for the prospect, Save for all prospects, or Don't save. Prospect-only saves persist just for that lead; Save for all prospects stores the edited script as the default while still substituting each lead's business name, call reason and website issue. Desktop-connected script preferences persist in the existing SQLite app_settings table. Existing Twilio calling, outcomes, follow-ups, Finder shortlist, live SQLite CRM data and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.2.8 bundles Browser CRM V2.3. The left-side cold-call script is now directly editable during a call. Buttons at the bottom let you Save for the prospect, Save for all prospects, or Don't save. Prospect-only saves persist just for that lead; Save for all prospects stores the edited script as the default while still substituting each lead's business name, call reason and website issue. Desktop-connected script preferences persist in the existing SQLite app_settings table. Existing Twilio calling, outcomes, follow-ups, Finder shortlist, live SQLite CRM data and updater behaviour are preserved.",
+  "size": 1653807,
+  "sha256": "1a2d5626c86ac81dee10255aa6200b2715956f94858d3d20c4bb8985d42246ae",
+  "published_at": "2026-09-20T10:02:40.121061Z"
 }
