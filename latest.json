@@ -1,14 +1,14 @@
 {
-  "version": "10.2.2",
+  "version": "10.2.3",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.3/part-004.b64"
   ],
-  "size": 1634086,
-  "sha256": "f7fea6455fa6b449ea3139b7f6b4f694c918fdf65bdf49c3fe9aaab2d0458f34",
-  "published_at": "2026-09-20T03:37:00Z",
-  "notes": "FirstSeen Desktop V10.2.2: Business Finder now collects more cold-call context from Google Places, including business status, opening hours/open-now data and service-area signals. Browser CRM V1.4 adds a dedicated Call Intel view, live Refresh Call Intel for Google-linked leads, stronger business-specific openers and answer-likelihood guidance, plus Call Any Lead so any saved lead with a phone number can be called even when it is not in the Call Queue. Pipeline cards now also expose direct Call actions."
+  "size": 1630456,
+  "sha256": "06b628e0bb77a6d42c61e59732e9fafcc2905bc6f6a79fcfee4018ebec2336df",
+  "published_at": "2026-09-20T04:45:00Z",
+  "notes": "FirstSeen Desktop V10.2.3: Browser CRM adds a dedicated Want to Contact sidebar view for Google Finder businesses marked \ud83d\udc4d Lead. These leads appear even when no notes were written and before they are promoted into the permanent CRM. They can be called directly without entering the Call Queue, call attempts are written back to the Finder decision record, and Call Intel can be refreshed from Google Places. Existing CRM, SQLite, clients, websites and Finder decisions are preserved."
 }

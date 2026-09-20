@@ -1,8 +1,7 @@
 {
+  "status": "published",
   "version": "10.2.3",
-  "download_url": "https://uc055909bc59db8dd3b0ed0d4ef3.dl.dropboxusercontent.com/cd/0/get/DIdA1UosO_XuTnW3MnKb326w64bUr1VAORifPJKpVfTZMMPqk370XHFXzK9TCKswzDu2eRqqLi-X_1eFPdrhK5bsGy5jCgffknrDVeWSFSDNL5O-m61dJdiFH6yuL7bwdaomGJCc4-XMmR17VxIq-tXN1T6YUC433VZMMG7chXQtMQ/file?c_luid=7fe4b514",
   "size": 1630456,
   "sha256": "06b628e0bb77a6d42c61e59732e9fafcc2905bc6f6a79fcfee4018ebec2336df",
-  "published_at": "2026-09-20T04:45:00Z",
-  "notes": "FirstSeen Desktop V10.2.3: Browser CRM adds a dedicated Want to Contact sidebar view for Google Finder businesses marked 👍 Lead. These leads appear even when no notes were written and before they are promoted into the permanent CRM. They can be called directly without entering the Call Queue, call attempts are written back to the Finder decision record, and Call Intel can be refreshed from Google Places. Existing CRM, SQLite, clients, websites and Finder decisions are preserved."
+  "published_at": "2026-09-20T04:45:00Z"
 }
