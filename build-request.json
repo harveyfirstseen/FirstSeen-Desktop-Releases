@@ -4,5 +4,5 @@
   "version": "10.2.6",
   "browser_version": "2.1",
   "notes": "FirstSeen Desktop V10.2.6 bundles Browser CRM V2.1. When any lead is called from anywhere in the CRM, FirstSeen now opens a lead-aware cold-call brief at the top of the lead drawer with the selected business name, phone, area, business type, website status, Google reputation, a lead-specific reason for calling, and Harvey's approved FirstSeen cold-call script automatically filled with that lead's details. The drawer scrolls to the top when a call starts so the script is immediately visible. Existing Twilio browser calling, Finder decisions, Want to Contact, call outcomes, follow-ups, SQLite data, encrypted Twilio credentials and updater behaviour are preserved.",
-  "retry": 2
+  "retry": 3
 }
