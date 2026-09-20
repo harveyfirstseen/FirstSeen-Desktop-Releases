@@ -1,7 +1,8 @@
 {
-  "status": "published",
-  "version": "10.2.3",
-  "size": 1630456,
-  "sha256": "06b628e0bb77a6d42c61e59732e9fafcc2905bc6f6a79fcfee4018ebec2336df",
-  "published_at": "2026-09-20T04:45:00Z"
+  "version": "10.2.4",
+  "download_url": "https://uc99216a09387775f7904a4f0679.dl.dropboxusercontent.com/cd/0/get/DIefikiwo-hI98TgO7w5ecvbzB_5cU_dRlVIkpLsOR4Ohlaq_MjawAZbH_vtc8YFSYa_LfcrqPO_P29UhZT7vQ9w74lfLZxNiU2LLHpslhtZN44P6q5qbm_Ixy-rSiC-VKsZMbEvS1Q5Kz1_NnBCoK--78UzGYsP04RCYln1mn8g-A/file?c_luid=7fe4b514",
+  "size": 1632992,
+  "sha256": "9b41219dbae7c8694a84c266472c6662c18b37f91e675bb1ef0637d0027fe603",
+  "published_at": "2026-09-20T04:51:00Z",
+  "notes": "FirstSeen Desktop V10.2.4: Browser CRM V1.6 keeps the navigation sidebar pinned to the screen while the workspace scrolls. Full desktop keeps the 220px sidebar fixed, compact desktop keeps the icon sidebar fixed, and mobile keeps navigation as a sticky horizontal strip. Existing CRM, Finder decisions, SQLite data, clients and websites are preserved."
 }
