@@ -93,39 +93,39 @@ jobs:
               raise SystemExit("Could not find Browser CRM V2.0 inside the installer payload")
 
           new_call_script = r'''  function callSpecificReason(l){
-    if(!l.website)return 'you don’t appear to have a dedicated website listed';
-    const auditReason=(l.auditReasons||[]).find(Boolean);
-    if(auditReason){
-      const reason=String(auditReason).trim().replace(/[.!?]+$/,'');
-      return reason?reason.charAt(0).toLowerCase()+reason.slice(1):'there may be an opportunity to improve how customers find and contact you online';
-    }
-    if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'your website looks like it could make it easier for customers to understand what you do and get in touch';
-    if(l.rating&&Number(l.reviews||0)>=20)return `you’ve built a strong Google reputation with ${l.reviews} reviews, and I wanted to see how well your website is turning that visibility into enquiries`;
-    return 'I wanted to see how well your online presence is turning local searches into enquiries';
-  }
-  function callScript(l){
-    return `Hey, is this ${l.business}? Harvey here from FirstSeen. I found your business online and noticed ${callSpecificReason(l)}. I build websites for local businesses, and I think I could help. I’m just looking to grab 10 minutes with you sometime this week and show you what I mean. Would you be open to that?`;
-  }
-  function audit(l){'''
+              if(!l.website)return 'you don’t appear to have a dedicated website listed';
+              const auditReason=(l.auditReasons||[]).find(Boolean);
+              if(auditReason){
+                const reason=String(auditReason).trim().replace(/[.!?]+$/,'');
+                return reason?reason.charAt(0).toLowerCase()+reason.slice(1):'there may be an opportunity to improve how customers find and contact you online';
+              }
+              if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'your website looks like it could make it easier for customers to understand what you do and get in touch';
+              if(l.rating&&Number(l.reviews||0)>=20)return `you’ve built a strong Google reputation with ${l.reviews} reviews, and I wanted to see how well your website is turning that visibility into enquiries`;
+              return 'I wanted to see how well your online presence is turning local searches into enquiries';
+            }
+            function callScript(l){
+              return `Hey, is this ${l.business}? Harvey here from FirstSeen. I found your business online and noticed ${callSpecificReason(l)}. I build websites for local businesses, and I think I could help. I’m just looking to grab 10 minutes with you sometime this week and show you what I mean. Would you be open to that?`;
+            }
+            function audit(l){'''
 
           new_call_ui = r'''  function renderCallBrief(l){
-    const reason=callSpecificReason(l);
-    const website=!l.website?'No website listed':((l.websiteQuality||'').trim()||'Website saved');
-    const reputation=l.rating?`${l.rating}★ · ${l.reviews||0} reviews`:'No Google rating saved';
-    return `<div class="call-brief"><div class="call-brief-head"><div><div class="eyebrow">Cold call script</div><strong>${esc(l.business)}</strong></div><span class="call-brief-ready">Ready to call</span></div><div class="call-brief-grid"><div><label>Business</label><span>${esc(l.business)}</span></div><div><label>Phone</label><span>${esc(normalizePhone(l.phone)||l.phone)}</span></div><div><label>Area</label><span>${esc(l.suburb||l.address||'—')}</span></div><div><label>Business type</label><span>${esc(l.category||'—')}</span></div><div><label>Website</label><span>${esc(website)}</span></div><div><label>Google</label><span>${esc(reputation)}</span></div></div><div class="call-brief-reason"><strong>Specific reason:</strong> ${esc(reason)}</div><div class="call-script-copy">${esc(callScript(l))}</div><div class="call-script-tip">Keep it short. Ask the question, then pause and let them answer.</div></div>`;
-  }
-  function renderCallDock(l){
-    const statusLabel={idle:'Ready',starting:'Starting Twilio…',ready:'Ready',dialling:'Dialling…',ringing:'Ringing…',connected:'Connected',ended:'Call ended',error:'Call error'}[voice.state]||voice.state;
-    const twilioActive=Boolean(connection.twilio); const active=Boolean(voice.call);
-    return `<div class="call-dock"><div class="call-dock-top"><div><strong>${twilioActive?'Browser call':'Call tracking'}</strong><div class="tiny">${esc(l.business)} · ${esc(normalizePhone(l.phone)||l.phone)}</div></div><div class="call-status-stack"><span class="call-state ${esc(voice.state)}">${esc(twilioActive?statusLabel:'Device dialler')}</span><div class="call-timer" id="callTimer">${callStart?'00:00':'--:--'}</div></div></div>${voice.error?`<div class="call-error">${esc(voice.error)}</div>`:''}<div class="call-controls">${twilioActive?`<button data-call-control="mute" ${active?'':'disabled'}>${voice.muted?'Unmute':'Mute'}</button><button data-call-control="keypad" ${active?'':'disabled'}>Keypad</button><button class="danger-call" data-call-control="hangup" ${active||['dialling','ringing','connected'].includes(voice.state)?'':'disabled'}>Hang up</button>`:'<span class="tiny">Twilio is not connected. FirstSeen can still open your device dialler.</span>'}</div>${voice.keypad&&active?`<div class="dtmf-grid">${['1','2','3','4','5','6','7','8','9','*','0','#'].map(d=>`<button data-dtmf="${d}">${d}</button>`).join('')}</div>`:''}<div class="call-outcome-label">Finish by choosing the call outcome</div><div class="outcome-grid">${['No Answer','Spoke To','Send Info','Follow Up','Meeting Booked','Quote Sent','Won','Lost'].map(o=>`<button data-outcome="${o}">${o}</button>`).join('')}</div></div>`;
-  }
-  function closeDrawer(){'''
+              const reason=callSpecificReason(l);
+              const website=!l.website?'No website listed':((l.websiteQuality||'').trim()||'Website saved');
+              const reputation=l.rating?`${l.rating}★ · ${l.reviews||0} reviews`:'No Google rating saved';
+              return `<div class="call-brief"><div class="call-brief-head"><div><div class="eyebrow">Cold call script</div><strong>${esc(l.business)}</strong></div><span class="call-brief-ready">Ready to call</span></div><div class="call-brief-grid"><div><label>Business</label><span>${esc(l.business)}</span></div><div><label>Phone</label><span>${esc(normalizePhone(l.phone)||l.phone)}</span></div><div><label>Area</label><span>${esc(l.suburb||l.address||'—')}</span></div><div><label>Business type</label><span>${esc(l.category||'—')}</span></div><div><label>Website</label><span>${esc(website)}</span></div><div><label>Google</label><span>${esc(reputation)}</span></div></div><div class="call-brief-reason"><strong>Specific reason:</strong> ${esc(reason)}</div><div class="call-script-copy">${esc(callScript(l))}</div><div class="call-script-tip">Keep it short. Ask the question, then pause and let them answer.</div></div>`;
+            }
+            function renderCallDock(l){
+              const statusLabel={idle:'Ready',starting:'Starting Twilio…',ready:'Ready',dialling:'Dialling…',ringing:'Ringing…',connected:'Connected',ended:'Call ended',error:'Call error'}[voice.state]||voice.state;
+              const twilioActive=Boolean(connection.twilio); const active=Boolean(voice.call);
+              return `<div class="call-dock"><div class="call-dock-top"><div><strong>${twilioActive?'Browser call':'Call tracking'}</strong><div class="tiny">${esc(l.business)} · ${esc(normalizePhone(l.phone)||l.phone)}</div></div><div class="call-status-stack"><span class="call-state ${esc(voice.state)}">${esc(twilioActive?statusLabel:'Device dialler')}</span><div class="call-timer" id="callTimer">${callStart?'00:00':'--:--'}</div></div></div>${voice.error?`<div class="call-error">${esc(voice.error)}</div>`:''}<div class="call-controls">${twilioActive?`<button data-call-control="mute" ${active?'':'disabled'}>${voice.muted?'Unmute':'Mute'}</button><button data-call-control="keypad" ${active?'':'disabled'}>Keypad</button><button class="danger-call" data-call-control="hangup" ${active||['dialling','ringing','connected'].includes(voice.state)?'':'disabled'}>Hang up</button>`:'<span class="tiny">Twilio is not connected. FirstSeen can still open your device dialler.</span>'}</div>${voice.keypad&&active?`<div class="dtmf-grid">${['1','2','3','4','5','6','7','8','9','*','0','#'].map(d=>`<button data-dtmf="${d}">${d}</button>`).join('')}</div>`:''}<div class="call-outcome-label">Finish by choosing the call outcome</div><div class="outcome-grid">${['No Answer','Spoke To','Send Info','Follow Up','Meeting Booked','Quote Sent','Won','Lost'].map(o=>`<button data-outcome="${o}">${o}</button>`).join('')}</div></div>`;
+            }
+            function closeDrawer(){'''
 
           extra_css = r'''
-/* Browser CRM V2.1 — lead-aware cold call script */
-.call-brief{margin:14px 0 12px;border:1px solid #d9def8;background:#f8f9ff;border-radius:12px;padding:13px}.call-brief-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.call-brief-head strong{font-size:15px}.call-brief-ready{font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.05em;background:#e7f8ef;color:#146c43;border:1px solid #c4ead6;border-radius:999px;padding:5px 8px}.call-brief-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}.call-brief-grid>div{border:1px solid #e3e6f3;background:#fff;border-radius:8px;padding:8px;min-width:0}.call-brief-grid label{display:block;color:#7a8498;font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:.04em}.call-brief-grid span{display:block;font-size:11px;font-weight:700;margin-top:3px;overflow-wrap:anywhere}.call-brief-reason{font-size:11px;line-height:1.45;margin-top:10px;color:#4b5563}.call-script-copy{margin-top:9px;background:#111827;color:#fff;border-radius:10px;padding:12px;font-size:12px;line-height:1.55}.call-script-tip{font-size:10px;color:#667085;margin-top:7px;font-weight:650}
-@media(max-width:640px){.call-brief-grid{grid-template-columns:1fr 1fr}}
-'''
+          /* Browser CRM V2.1 — lead-aware cold call script */
+          .call-brief{margin:14px 0 12px;border:1px solid #d9def8;background:#f8f9ff;border-radius:12px;padding:13px}.call-brief-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.call-brief-head strong{font-size:15px}.call-brief-ready{font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.05em;background:#e7f8ef;color:#146c43;border:1px solid #c4ead6;border-radius:999px;padding:5px 8px}.call-brief-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}.call-brief-grid>div{border:1px solid #e3e6f3;background:#fff;border-radius:8px;padding:8px;min-width:0}.call-brief-grid label{display:block;color:#7a8498;font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:.04em}.call-brief-grid span{display:block;font-size:11px;font-weight:700;margin-top:3px;overflow-wrap:anywhere}.call-brief-reason{font-size:11px;line-height:1.45;margin-top:10px;color:#4b5563}.call-script-copy{margin-top:9px;background:#111827;color:#fff;border-radius:10px;padding:12px;font-size:12px;line-height:1.55}.call-script-tip{font-size:10px;color:#667085;margin-top:7px;font-weight:650}
+          @media(max-width:640px){.call-brief-grid{grid-template-columns:1fr 1fr}}
+          '''
 
           for path in browser_files:
               text = path.read_text(encoding="utf-8")
