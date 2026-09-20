@@ -25,6 +25,7 @@ jobs:
           import io
           import json
           import pathlib
+          import runpy
           import re
           import shutil
           import struct
@@ -37,12 +38,12 @@ jobs:
           request = json.loads((root / "build-request.json").read_text(encoding="utf-8"))
           base_version = str(request["base_version"]).strip()
           version = str(request["version"]).strip()
-          browser_version = str(request.get("browser_version", "2.3")).strip()
+          browser_version = str(request.get("browser_version", "2.4")).strip()
           notes = str(request.get("notes", "")).strip()
           published_at = str(request.get("published_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
 
-          if version != "10.2.8":
-              raise SystemExit("This patch builder currently targets FirstSeen Desktop 10.2.8 only.")
+          if version != "10.2.9":
+              raise SystemExit("This patch builder currently targets FirstSeen Desktop 10.2.9 only.")
 
           base_dir = root / "installers" / base_version
           parts = sorted(base_dir.glob("part-*.b64"))
@@ -67,258 +68,7 @@ jobs:
           with zipfile.ZipFile(io.BytesIO(payload_zip), "r") as zf:
               zf.extractall(payload_dir)
 
-          browser_dir = payload_dir / "app" / "src" / "browser-crm"
-          appjs_path = browser_dir / "app.js"
-          css_path = browser_dir / "app.css"
-          index_path = browser_dir / "index.html"
-          server_path = payload_dir / "app" / "src" / "main" / "browserCrm.js"
-          if not all(p.exists() for p in [appjs_path, css_path, index_path, server_path]):
-              raise SystemExit("Browser CRM source files are missing from the base payload")
-
-          s = appjs_path.read_text(encoding="utf-8")
-          state_old = "  let callScriptPanelOpen = false;\n  let boardFilter = 'Open';"
-          state_new = "  let callScriptPanelOpen = false;\n  let callScriptModel = null;\n  let callScriptSavedModel = null;\n  let callScriptSaveSource = 'default';\n  let callScriptDirty = false;\n  let callScriptSaving = false;\n  let boardFilter = 'Open';"
-          if state_old not in s:
-              raise SystemExit("Could not add editable call-script state")
-          s = s.replace(state_old, state_new, 1)
-
-          helper_marker = "  function scriptSpeech(text)"
-          helper_code = r'''  function cloneCallScript(model){return JSON.parse(JSON.stringify(model));}
-          function normalizeCallScriptModel(model){
-            if(!model||!Array.isArray(model.sections))return null;
-            const sections=model.sections.slice(0,40).map(section=>({
-              title:String(section&&section.title||'').trim().slice(0,160),
-              blocks:(Array.isArray(section&&section.blocks)?section.blocks:[]).slice(0,30).map(block=>({
-                type:block&&block.type==='action'?'action':'speech',
-                tone:['yes','no','pause'].includes(block&&block.tone)?block.tone:'',
-                text:String(block&&block.text||'').replace(/\r/g,'').trim().slice(0,6000)
-              })).filter(block=>block.text)
-            })).filter(section=>section.title||section.blocks.length);
-            return sections.length?{version:1,sections}:null;
-          }
-          function callScriptProspectKey(l){return l&&l.kind==='google-shortlist'?'google:'+(l.googlePlaceId||l.id):'lead:'+(l&&l.id||'');}
-          function replaceLiteral(value,find,replacement){return find?String(value).split(String(find)).join(replacement):String(value);}
-          function resolveCallScriptModel(model,l){
-            const resolved=cloneCallScript(normalizeCallScriptModel(model)||{version:1,sections:[]});
-            const reason=callSpecificReason(l),websiteIssue=callWebsiteIssue(l),business=l.business||'the business';
-            for(const section of resolved.sections){
-              section.title=section.title.split('{{business}}').join(business).split('{{reason}}').join(reason).split('{{website_issue}}').join(websiteIssue);
-              for(const block of section.blocks)block.text=block.text.split('{{business}}').join(business).split('{{reason}}').join(reason).split('{{website_issue}}').join(websiteIssue);
-            }
-            return resolved;
-          }
-          function templateizeCallScriptModel(model,l){
-            const out=cloneCallScript(normalizeCallScriptModel(model));
-            const reason=callSpecificReason(l),websiteIssue=callWebsiteIssue(l),business=l.business||'';
-            for(const section of out.sections){
-              section.title=replaceLiteral(replaceLiteral(replaceLiteral(section.title,websiteIssue,'{{website_issue}}'),reason,'{{reason}}'),business,'{{business}}');
-              for(const block of section.blocks)block.text=replaceLiteral(replaceLiteral(replaceLiteral(block.text,websiteIssue,'{{website_issue}}'),reason,'{{reason}}'),business,'{{business}}');
-            }
-            return out;
-          }
-          function standaloneScriptStore(){
-            state.settings.callScriptGlobal=state.settings.callScriptGlobal||null;
-            state.settings.callScriptProspects=state.settings.callScriptProspects&&typeof state.settings.callScriptProspects==='object'?state.settings.callScriptProspects:{};
-            return state.settings;
-          }
-          function captureCallScriptModel(panel){
-            const sections=[...panel.querySelectorAll('.script-section')].map(section=>({
-              title:(section.querySelector('[data-script-title]')&&section.querySelector('[data-script-title]').textContent||'').trim(),
-              blocks:[...section.querySelectorAll('[data-script-block]')].map(block=>({type:block.dataset.scriptBlock==='action'?'action':'speech',tone:block.dataset.tone||'',text:(block.textContent||'').trim()})).filter(block=>block.text)
-            }));
-            return normalizeCallScriptModel({version:1,sections});
-          }
-          function applyCallScriptModelToPanel(panel,model){
-            const clean=normalizeCallScriptModel(model);if(!clean)return;
-            const sections=[...panel.querySelectorAll('.script-section')];
-            clean.sections.forEach((saved,i)=>{
-              const section=sections[i];if(!section)return;
-              const title=section.querySelector('[data-script-title]');if(title)title.textContent=saved.title;
-              const blocks=[...section.querySelectorAll('[data-script-block]')];
-              saved.blocks.forEach((block,j)=>{if(blocks[j])blocks[j].textContent=block.text;});
-            });
-          }
-          function updateCallScriptFooter(message){
-            const panel=el('callScriptPanel');if(!panel)return;
-            const status=panel.querySelector('[data-script-save-status]');
-            if(status)status.textContent=message||(callScriptDirty?'Unsaved changes':callScriptSaveSource==='prospect'?'Saved for this prospect':callScriptSaveSource==='global'?'Using your saved script for all prospects':'Using the FirstSeen default script');
-            panel.querySelectorAll('.script-save-actions button').forEach(button=>button.disabled=callScriptSaving);
-          }
-          async function loadCallScriptForLead(l){
-            let raw=null,source='default';const key=callScriptProspectKey(l);
-            if(connection.mode==='desktop'){
-              try{const result=await api('/api/call-script?prospectKey='+encodeURIComponent(key));raw=result.script||null;source=result.source||'default';}catch{}
-            }else{
-              const store=standaloneScriptStore();raw=store.callScriptProspects[key]||store.callScriptGlobal||null;source=store.callScriptProspects[key]?'prospect':store.callScriptGlobal?'global':'default';
-            }
-            const panel=el('callScriptPanel');
-            if(raw&&panel){
-              callScriptModel=resolveCallScriptModel(raw,l);
-              applyCallScriptModelToPanel(panel,callScriptModel);
-            }else if(panel){
-              callScriptModel=captureCallScriptModel(panel);
-            }
-            callScriptSavedModel=cloneCallScript(callScriptModel);callScriptSaveSource=source;callScriptDirty=false;callScriptSaving=false;updateCallScriptFooter();
-          }
-          async function saveEditedCallScript(scope){
-            const l=leadById(callLeadId),panel=el('callScriptPanel');if(!l||!panel||callScriptSaving)return;
-            const model=captureCallScriptModel(panel);if(!model)return;
-            const key=callScriptProspectKey(l);callScriptSaving=true;updateCallScriptFooter('Saving…');
-            try{
-              if(scope==='all'){
-                const template=templateizeCallScriptModel(model,l);
-                if(connection.mode==='desktop')await api('/api/call-script',{method:'POST',body:JSON.stringify({scope:'all',prospectKey:key,script:template})});
-                else{const store=standaloneScriptStore();store.callScriptGlobal=template;delete store.callScriptProspects[key];save();}
-                callScriptSaveSource='global';
-              }else{
-                if(connection.mode==='desktop')await api('/api/call-script',{method:'POST',body:JSON.stringify({scope:'prospect',prospectKey:key,script:model})});
-                else{const store=standaloneScriptStore();store.callScriptProspects[key]=model;save();}
-                callScriptSaveSource='prospect';
-              }
-              callScriptModel=cloneCallScript(model);callScriptSavedModel=cloneCallScript(model);callScriptDirty=false;
-            }catch(error){alert(error.message||'Could not save the call script.');}
-            finally{callScriptSaving=false;updateCallScriptFooter();}
-          }
-          function discardEditedCallScript(){
-            const panel=el('callScriptPanel');if(panel&&callScriptSavedModel)applyCallScriptModelToPanel(panel,callScriptSavedModel);
-            callScriptDirty=false;updateCallScriptFooter('Changes not saved.');
-          }
-          function bindCallScriptEditor(panel,l){
-            if(callScriptModel)applyCallScriptModelToPanel(panel,callScriptModel);else callScriptModel=captureCallScriptModel(panel);
-            if(!callScriptSavedModel)callScriptSavedModel=cloneCallScript(callScriptModel);
-            panel.insertAdjacentHTML('beforeend',"<div class=\"script-save-bar\"><div class=\"script-save-status\" data-script-save-status></div><div class=\"script-save-actions\"><button type=\"button\" data-script-save-prospect>Save for the prospect</button><button type=\"button\" class=\"save-all\" data-script-save-all>Save for all prospects</button><button type=\"button\" class=\"dont-save\" data-script-dont-save>Don't save</button></div></div>");
-            panel.querySelectorAll('[contenteditable=\"true\"]').forEach(node=>node.addEventListener('input',()=>{callScriptDirty=true;updateCallScriptFooter();}));
-            panel.querySelector('[data-script-save-prospect]').onclick=()=>saveEditedCallScript('prospect');
-            panel.querySelector('[data-script-save-all]').onclick=()=>saveEditedCallScript('all');
-            panel.querySelector('[data-script-dont-save]').onclick=discardEditedCallScript;
-            updateCallScriptFooter();
-          }
-          '''
-          if helper_marker not in s:
-              raise SystemExit("Could not locate call-script helper insertion point")
-          s = s.replace(helper_marker, helper_code + helper_marker, 1)
-
-          bt = chr(96)
-          speech_old = "  function scriptSpeech(text){return " + bt + '<div class="script-speech">“${esc(text)}”</div>' + bt + ";}"
-          speech_new = "  function scriptSpeech(text){return " + bt + '<div class="script-speech" contenteditable="true" spellcheck="true" data-script-block="speech">${esc(text)}</div>' + bt + ";}"
-          action_old = "function scriptAction(text,tone=''){return " + bt + '<div class="script-action ${tone}">${esc(text)}</div>' + bt + ";}"
-          action_new = "function scriptAction(text,tone=''){return " + bt + '<div class="script-action ${tone}" contenteditable="true" spellcheck="true" data-script-block="action" data-tone="${esc(tone)}">${esc(text)}</div>' + bt + ";}"
-          section_old = "function scriptSection(title,body){return " + bt + '<section class="script-section"><div class="script-section-title">${esc(title)}</div>${body}</section>' + bt + ";}"
-          section_new = "function scriptSection(title,body){return " + bt + '<section class="script-section"><div class="script-section-title" contenteditable="true" spellcheck="true" data-script-title>${esc(title)}</div>${body}</section>' + bt + ";}"
-          for old,new,label in [(speech_old,speech_new,'speech'),(action_old,action_new,'action'),(section_old,section_new,'section')]:
-              if old not in s: raise SystemExit(f"Could not patch editable script {label}")
-              s=s.replace(old,new,1)
-
-          panel_old = "panel.classList.remove('hidden');\nconst close=panel.querySelector('[data-close-call-script]');"
-          panel_new = "panel.classList.remove('hidden');\nbindCallScriptEditor(panel,l);\nconst close=panel.querySelector('[data-close-call-script]');"
-          if panel_old not in s:
-              raise SystemExit("Could not bind call-script editor")
-          s=s.replace(panel_old,panel_new,1)
-
-          start_old = "callLeadId=id;callStart=null;clearInterval(callTimer);callTimer=null;voice.error='';voice.state=connection.twilio?'starting':'idle';callScriptPanelOpen=true;openLead(id);renderDrawer();renderCallScriptPanel();"
-          start_new = "callLeadId=id;callStart=null;clearInterval(callTimer);callTimer=null;voice.error='';voice.state=connection.twilio?'starting':'idle';callScriptPanelOpen=true;callScriptModel=null;callScriptSavedModel=null;callScriptSaveSource='default';callScriptDirty=false;openLead(id);renderDrawer();renderCallScriptPanel();await loadCallScriptForLead(l);"
-          if start_old not in s:
-              raise SystemExit("Could not patch call-script loading")
-          s=s.replace(start_old,start_new,1)
-
-          finish_old = "clearInterval(callTimer);callTimer=null;callLeadId=null;callStart=null;callScriptPanelOpen=false;voice.call=null;voice.state='idle';voice.error='';voice.muted=false;voice.keypad=false;renderCallScriptPanel();render();if(activeLeadId)renderDrawer();"
-          finish_new = "clearInterval(callTimer);callTimer=null;callLeadId=null;callStart=null;callScriptPanelOpen=false;callScriptModel=null;callScriptSavedModel=null;callScriptSaveSource='default';callScriptDirty=false;voice.call=null;voice.state='idle';voice.error='';voice.muted=false;voice.keypad=false;renderCallScriptPanel();render();if(activeLeadId)renderDrawer();"
-          if finish_old not in s:
-              raise SystemExit("Could not reset call-script editor")
-          s=s.replace(finish_old,finish_new,1)
-          appjs_path.write_text(s,encoding="utf-8")
-
-          css = css_path.read_text(encoding="utf-8").rstrip()
-          editable_css = r'''
-          /* Browser CRM V2.3 — editable cold-call script */
-          .script-edit-hint{margin-top:6px;font-size:10px;color:#7a8498;font-weight:650}.script-panel-scroll{padding-bottom:18px}.script-section-title[contenteditable=true],.script-speech[contenteditable=true],.script-action[contenteditable=true]{outline:none;border-radius:7px;transition:background .12s ease,box-shadow .12s ease}.script-section-title[contenteditable=true]:focus,.script-speech[contenteditable=true]:focus,.script-action[contenteditable=true]:focus{background:#fff8df;box-shadow:0 0 0 2px #f2d47d}.script-save-bar{flex:0 0 auto;border-top:1px solid #e3e7ef;background:#fff;padding:11px 14px 13px}.script-save-status{min-height:15px;margin-bottom:8px;font-size:10px;color:#667085;font-weight:700}.script-save-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.script-save-actions button{border:1px solid #d5dae5;background:#fff;color:#263044;border-radius:9px;min-height:38px;padding:8px 10px;font-size:10px;font-weight:850;cursor:pointer}.script-save-actions button:hover:not(:disabled){background:#f5f7fb}.script-save-actions button:disabled{opacity:.45;cursor:not-allowed}.script-save-actions .save-all{background:#4f59c8;border-color:#4f59c8;color:#fff}.script-save-actions .save-all:hover:not(:disabled){background:#444db2}.script-save-actions .dont-save{grid-column:1/-1;background:#f6f7f9;color:#6b7280}.script-save-actions .dont-save:hover:not(:disabled){background:#eceff3}
-          @media(max-width:760px){.script-save-actions{grid-template-columns:1fr}.script-save-actions .dont-save{grid-column:auto}}
-          '''
-          if "Browser CRM V2.3 — editable cold-call script" not in css:
-              css += "\n\n" + textwrap.dedent(editable_css).strip() + "\n"
-          css_path.write_text(css,encoding="utf-8")
-
-          h=index_path.read_text(encoding="utf-8").replace("Browser CRM V2.2","Browser CRM V2.3").replace("<title>FirstSeen CRM V2.2</title>","<title>FirstSeen CRM V2.3</title>")
-          index_path.write_text(h,encoding="utf-8")
-
-          server=server_path.read_text(encoding="utf-8")
-          read_json_line = "function readJson(req) { return new Promise((resolve, reject) => { let raw=''; req.on('data', c => { raw += c; if (raw.length > 1_000_000) req.destroy(); }); req.on('end', () => { try { resolve(raw ? JSON.parse(raw) : {}); } catch { reject(new Error('Invalid JSON body.')); } }); req.on('error', reject); }); }\n"
-          server_helpers = r'''function callScriptProspectSettingKey(prospectKey) { return 'browser_crm_call_script_prospect_v1_'+crypto.createHash('sha256').update(String(prospectKey||'')).digest('hex'); }
-          function readAppSettingJson(db, key) { const row=db.prepare('SELECT value FROM app_settings WHERE key=? LIMIT 1').get(key); if(!row)return null; try{return JSON.parse(row.value);}catch{return null;} }
-          function writeAppSettingJson(db, key, value) { const encoded=JSON.stringify(value); db.prepare('INSERT INTO app_settings (key,value,updated_at) VALUES (?,?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at').run(key,encoded,nowIso()); }
-          function cleanCallScriptModel(input) {
-            if(!input||!Array.isArray(input.sections))throw new Error('Call script is invalid.');
-            const sections=input.sections.slice(0,40).map(section=>({
-              title:text(section&&section.title,160),
-              blocks:(Array.isArray(section&&section.blocks)?section.blocks:[]).slice(0,30).map(block=>({type:block&&block.type==='action'?'action':'speech',tone:['yes','no','pause'].includes(block&&block.tone)?block.tone:'',text:text(block&&block.text,6000)})).filter(block=>block.text)
-            })).filter(section=>section.title||section.blocks.length);
-            if(!sections.length)throw new Error('Call script is empty.');
-            return {version:1,sections};
-          }
-          '''
-          if read_json_line not in server:
-              raise SystemExit("Could not add call-script server helpers")
-          server=server.replace(read_json_line,read_json_line+server_helpers,1)
-
-          route_marker = "    if (req.method === 'GET' && parsed.pathname === '/api/twilio/config') {\n"
-          routes = r'''    if (req.method === 'GET' && parsed.pathname === '/api/call-script') {
-            const prospectKey=text(parsed.searchParams.get('prospectKey'),500);
-            const globalScript=readAppSettingJson(db,'browser_crm_call_script_global_v1');
-            const prospectScript=prospectKey?readAppSettingJson(db,callScriptProspectSettingKey(prospectKey)):null;
-            return json(res,200,{ok:true,source:prospectScript?'prospect':globalScript?'global':'default',script:prospectScript||globalScript||null});
-          }
-          if (req.method === 'POST' && parsed.pathname === '/api/call-script') {
-            const input=await readJson(req),scope=text(input.scope,20),prospectKey=text(input.prospectKey,500),script=cleanCallScriptModel(input.script);
-            if(scope==='prospect'){
-              if(!prospectKey)return json(res,400,{error:'A prospect is required to save this script.'});
-              writeAppSettingJson(db,callScriptProspectSettingKey(prospectKey),script);
-              return json(res,200,{ok:true,source:'prospect'});
-            }
-            if(scope==='all'){
-              writeAppSettingJson(db,'browser_crm_call_script_global_v1',script);
-              if(prospectKey)db.prepare('DELETE FROM app_settings WHERE key=?').run(callScriptProspectSettingKey(prospectKey));
-              return json(res,200,{ok:true,source:'global'});
-            }
-            return json(res,400,{error:'Choose whether to save this script for the prospect or for all prospects.'});
-          }
-          '''
-          if route_marker not in server:
-              raise SystemExit("Could not add call-script API routes")
-          server=server.replace(route_marker,routes+route_marker,1)
-          server_path.write_text(server,encoding="utf-8")
-
-          current_files = [
-              payload_dir / "app" / "README.md",
-              payload_dir / "app" / "docs" / "WINDOWS_INSTALLER_V10.md",
-              payload_dir / "app" / "installer" / "README.md",
-              payload_dir / "app" / "installer" / "install.ps1",
-              payload_dir / "install.ps1",
-              payload_dir / "app" / "src" / "renderer" / "index.html",
-              payload_dir / "app" / "src" / "renderer" / "app.js",
-          ]
-          for path in current_files:
-              if path.exists():
-                  text_value=path.read_text(encoding="utf-8").replace(base_version,version)
-                  path.write_text(text_value,encoding="utf-8")
-
-          package_path=payload_dir/"app"/"package.json"
-          package_data=json.loads(package_path.read_text(encoding="utf-8"))
-          package_data["version"]=version
-          package_data["description"]="FirstSeen Digital desktop operating app - V10.2.8 adds editable persistent cold-call scripts in Browser CRM V2.3."
-          package_path.write_text(json.dumps(package_data,indent=2)+"\n",encoding="utf-8")
-
-          browser_readme=browser_dir/"README.md"
-          if browser_readme.exists():
-              readme=browser_readme.read_text(encoding="utf-8").replace("FirstSeen Browser CRM V2.2","FirstSeen Browser CRM V2.3")
-              if "V2.3 makes the left-side cold-call script editable." not in readme:
-                  readme=readme.rstrip()+"\n\nV2.3 makes the left-side cold-call script editable. Changes can be saved only for the selected prospect, saved as the default for all prospects, or discarded without saving. Desktop-connected saves persist in SQLite app settings.\n"
-              browser_readme.write_text(readme,encoding="utf-8")
-
-          release_notes=payload_dir/"app"/"docs"/"RELEASE_NOTES_V10_2_8.md"
-          release_notes.write_text("# FirstSeen Desktop V10.2.8\n\n- Browser CRM moves to V2.3.\n- The left-side cold-call script is directly editable while calling.\n- Added Save for the prospect, Save for all prospects, and Don't save controls.\n- Prospect-specific edits persist only for that lead.\n- Save for all prospects stores the edited script as the default template while still substituting each lead's business name, call reason and website issue.\n- Desktop-connected script preferences are stored in the existing SQLite app_settings table; no lead data is replaced or migrated.\n- Existing Twilio calling, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved.\n",encoding="utf-8")
-
-          subprocess.run(["node","--check",str(appjs_path)],check=True)
-          subprocess.run(["node","--check",str(server_path)],check=True)
+          runpy.run_path(str(root / "patches" / "v10_2_9.py"), init_globals={"payload_dir": payload_dir, "version": version, "browser_version": browser_version})
 
           # Build standalone Browser CRM from the modular source.
           index_text = index_path.read_text(encoding="utf-8")
@@ -405,7 +155,7 @@ jobs:
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FirstSeen-10.2.8-release
+          name: FirstSeen-10.2.9-release
           path: release-output/*
           if-no-files-found: error
           retention-days: 30
