@@ -1,7 +1,7 @@
 {
   "status": "published",
-  "version": "10.2.11",
-  "size": 1656965,
-  "sha256": "c64e5c51f837832be1896156bc2cfcd7143bed07328ec9ed79c1e52b7650b05f",
-  "published_at": "2026-09-20T21:50:46.716940Z"
+  "version": "10.2.12",
+  "size": 1660352,
+  "sha256": "cd12a84c86f9213d72cc6068a8b8f39152fdb547c28b52f8b06e87ff8ce7f701",
+  "published_at": "2026-09-20T22:52:44.195133Z"
 }
