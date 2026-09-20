@@ -92,17 +92,17 @@ jobs:
           if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'your website looks like it could make it easier for customers to understand what you do and get in touch';
           if(l.rating&&Number(l.reviews||0)>=20)return `you’ve built a strong Google reputation with ${l.reviews} reviews, and I wanted to see how well your website is turning that visibility into enquiries`;
           return 'I wanted to see how well your online presence is turning local searches into enquiries';
-        }
-        function callWebsiteIssue(l){
+          }
+          function callWebsiteIssue(l){
           const auditReason=(l.auditReasons||[]).find(Boolean);
           if(auditReason)return String(auditReason).trim().replace(/[.!?]+$/,'');
           if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'the site could make it easier for customers to understand what you do and get in touch';
           return 'there may be a few areas where the site could turn more local searches into enquiries';
-        }
-        function callScript(l){
+          }
+          function callScript(l){
           return `Hey, is this ${l.business}? Harvey here from FirstSeen. I found your business online and noticed ${callSpecificReason(l)}. I build websites for local businesses, and I think I could help. I’m just looking to grab 10 minutes with you sometime this week and show you what I mean. Would you be open to that?`;
-        }
-        '''
+          }
+          '''
           s, n = call_pattern.subn(lambda m: call_replacement, s, count=1)
           if n != 1:
               raise SystemExit("Could not patch call script helpers")
@@ -114,9 +114,9 @@ jobs:
 
           brief_pattern = re.compile(r"  function renderCallBrief\(l\)\{.*?\n  \}\n  function renderCallDock\(l\)\{", re.S)
           brief_replacement = r'''  function scriptSpeech(text){return `<div class="script-speech">“${esc(text)}”</div>`;}
-        function scriptAction(text,tone=''){return `<div class="script-action ${tone}">${esc(text)}</div>`;}
-        function scriptSection(title,body){return `<section class="script-section"><div class="script-section-title">${esc(title)}</div>${body}</section>`;}
-        function renderCallScriptPanel(){
+          function scriptAction(text,tone=''){return `<div class="script-action ${tone}">${esc(text)}</div>`;}
+          function scriptSection(title,body){return `<section class="script-section"><div class="script-section-title">${esc(title)}</div>${body}</section>`;}
+          function renderCallScriptPanel(){
           const panel=el('callScriptPanel'); if(!panel)return;
           const l=leadById(callLeadId);
           if(!callScriptPanelOpen||!l){panel.classList.add('hidden');panel.innerHTML='';return;}
@@ -137,8 +137,8 @@ jobs:
             </div>`;
           panel.classList.remove('hidden');
           const close=panel.querySelector('[data-close-call-script]'); if(close)close.onclick=()=>{callScriptPanelOpen=false;renderCallScriptPanel();};
-        }
-        function renderCallDock(l){'''
+          }
+          function renderCallDock(l){'''
           s, n = brief_pattern.subn(lambda m: brief_replacement, s, count=1)
           if n != 1:
               raise SystemExit("Could not replace inline call brief with left panel")
@@ -167,11 +167,11 @@ jobs:
 
           css = css_path.read_text(encoding="utf-8").rstrip()
           extra_css = r'''
-        /* Browser CRM V2.2 — standalone left-side cold-call script */
-        .call-script-panel{position:fixed;left:136px;top:16px;bottom:16px;width:min(460px,calc(100vw - 168px));z-index:65;background:#fff;border:1px solid #dfe3ec;border-radius:16px;box-shadow:0 22px 70px rgba(20,28,50,.24);display:flex;flex-direction:column;overflow:hidden}.call-script-panel.hidden{display:none}.script-panel-head{flex:0 0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 18px 15px;border-bottom:1px solid #e8ebf2;background:#fff}.script-kicker{font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}.script-panel-head h2{font-size:21px;line-height:1.15;margin:0;color:#171b26}.script-lead-meta{font-size:11px;color:#6b7280;margin-top:5px;font-weight:650}.script-close{border:1px solid #dfe3ec;background:#fff;color:#4b5563;width:34px;height:34px;border-radius:9px;font-size:22px;line-height:1;cursor:pointer;flex:0 0 auto}.script-close:hover{background:#f5f6f9}.script-panel-scroll{padding:8px 18px 22px;overflow:auto;scrollbar-width:thin}.script-section{padding:16px 0;border-bottom:1px solid #e9ecf2}.script-section:last-child{border-bottom:0}.script-section-title{font-size:12px;line-height:1.25;font-weight:900;letter-spacing:.035em;color:#111827;margin-bottom:10px}.script-speech{font-size:16px;line-height:1.58;color:#171b26;font-weight:560;margin:0 0 10px}.script-speech:last-child{margin-bottom:0}.script-action{font-size:11px;line-height:1.4;font-weight:800;color:#667085;background:#f4f6f9;border-radius:8px;padding:7px 9px;margin-top:7px}.script-action.pause{color:#7a5410;background:#fff7e6}.script-action.yes{color:#11613e;background:#eaf8f1}.script-action.no{color:#8c3030;background:#fff0f0}
-        @media(max-width:1000px){.call-script-panel{left:92px;width:min(440px,calc(100vw - 116px))}}
-        @media(max-width:760px){.call-script-panel{left:10px;right:10px;top:10px;bottom:10px;width:auto;z-index:95}.script-panel-head{padding:15px}.script-panel-scroll{padding:6px 15px 18px}.script-speech{font-size:15px}}
-        '''
+          /* Browser CRM V2.2 — standalone left-side cold-call script */
+          .call-script-panel{position:fixed;left:136px;top:16px;bottom:16px;width:min(460px,calc(100vw - 168px));z-index:65;background:#fff;border:1px solid #dfe3ec;border-radius:16px;box-shadow:0 22px 70px rgba(20,28,50,.24);display:flex;flex-direction:column;overflow:hidden}.call-script-panel.hidden{display:none}.script-panel-head{flex:0 0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 18px 15px;border-bottom:1px solid #e8ebf2;background:#fff}.script-kicker{font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}.script-panel-head h2{font-size:21px;line-height:1.15;margin:0;color:#171b26}.script-lead-meta{font-size:11px;color:#6b7280;margin-top:5px;font-weight:650}.script-close{border:1px solid #dfe3ec;background:#fff;color:#4b5563;width:34px;height:34px;border-radius:9px;font-size:22px;line-height:1;cursor:pointer;flex:0 0 auto}.script-close:hover{background:#f5f6f9}.script-panel-scroll{padding:8px 18px 22px;overflow:auto;scrollbar-width:thin}.script-section{padding:16px 0;border-bottom:1px solid #e9ecf2}.script-section:last-child{border-bottom:0}.script-section-title{font-size:12px;line-height:1.25;font-weight:900;letter-spacing:.035em;color:#111827;margin-bottom:10px}.script-speech{font-size:16px;line-height:1.58;color:#171b26;font-weight:560;margin:0 0 10px}.script-speech:last-child{margin-bottom:0}.script-action{font-size:11px;line-height:1.4;font-weight:800;color:#667085;background:#f4f6f9;border-radius:8px;padding:7px 9px;margin-top:7px}.script-action.pause{color:#7a5410;background:#fff7e6}.script-action.yes{color:#11613e;background:#eaf8f1}.script-action.no{color:#8c3030;background:#fff0f0}
+          @media(max-width:1000px){.call-script-panel{left:92px;width:min(440px,calc(100vw - 116px))}}
+          @media(max-width:760px){.call-script-panel{left:10px;right:10px;top:10px;bottom:10px;width:auto;z-index:95}.script-panel-head{padding:15px}.script-panel-scroll{padding:6px 15px 18px}.script-speech{font-size:15px}}
+          '''
           if "Browser CRM V2.2 — standalone left-side cold-call script" not in css:
               css += "\n\n" + textwrap.dedent(extra_css).strip() + "\n"
           css_path.write_text(css, encoding="utf-8")
