@@ -1,14 +1,14 @@
 {
-  "version": "10.2.9",
+  "version": "10.2.10",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.9/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.10/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.10/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.10/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.10/part-004.b64"
   ],
-  "size": 1654985,
-  "sha256": "7a08bf08148c287f166ab61f70bd3795d13b3d5cb3c95da0ca876467d135bc35",
-  "published_at": "2026-09-20T10:18:58.110975Z",
-  "notes": "FirstSeen Desktop V10.2.9 bundles Browser CRM V2.4. This fixes the editable cold-call script save controls, adds clear success/failure feedback, preserves prospect-only and all-prospect persistence, and formats the large opening script with every sentence on its own line for easier live reading. Existing Twilio browser calling, call outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
+  "size": 1656225,
+  "sha256": "ea6d30324915a697b1f5c74c4c6f4c66280bf7b8745e3eb478e5f90b533deb8c",
+  "published_at": "2026-09-20T21:45:44.091140Z",
+  "notes": "FirstSeen Desktop V10.2.10 bundles Browser CRM V2.5. Cold-call script saving has been reworked for reliability: save-button clicks use a stable panel handler, every save is mirrored immediately to dedicated browser storage, Desktop-connected saves are also written to SQLite and immediately read back to verify persistence, and the UI clearly reports whether the save reached Desktop or only the browser backup. Manual line breaks now persist correctly, and the opening script remains one sentence per line. Existing Twilio calling, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
 }
