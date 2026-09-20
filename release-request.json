@@ -1,7 +1,8 @@
 {
-  "status": "published",
-  "version": "10.2.0",
-  "size": 1608486,
-  "sha256": "65cf3bdc7d1509863a41795fb338b3c4995c13fa818422d9768764a8451d7346",
-  "published_at": "2026-09-19T15:00:00Z"
+  "version": "10.2.1",
+  "download_url": "https://uc32131844e609b1d1012fe78b9e.dl.dropboxusercontent.com/cd/0/get/DIdt7cxHa-6pjKd021UE82v2PzbwQs2wHOSpg6j7eW4hlktdOp2PsC4RWSJhQfddeTrrFZLZs7RcQtkzWJsoS-wpMuOxZpzqr1tsbrN2oOc3Hl834iozR__JUFlzxTP71wmFSG6senY1LN9QIgma0Ag0JoWvmTUzzHbv1Hxvm53URg/file?c_luid=7fe4b514",
+  "size": 1623176,
+  "sha256": "68a03fcfc0958069b4143fbabab2db03c01a71c4af695e5735652cfbcd6ab2fc",
+  "published_at": "2026-09-20T02:41:00Z",
+  "notes": "FirstSeen Desktop V10.2.1: adds a live Browser CRM bridge. Open Browser CRM directly from Desktop and it loads the same local SQLite leads automatically, with no bundled old/demo leads and no CSV import step. Browser lead creation, notes, pipeline changes, follow-ups and call outcomes write back to the Desktop CRM. Includes Browser CRM V1.3 and the secure server-side integration boundary for future Twilio browser calling."
 }
