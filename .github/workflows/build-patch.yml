@@ -1,0 +1,261 @@
+name: Build FirstSeen Desktop Patch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - build-request.json
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release channel
+        uses: actions/checkout@v4
+
+      - name: Build FirstSeen Desktop patch
+        shell: python
+        run: |
+          import base64
+          import hashlib
+          import io
+          import json
+          import pathlib
+          import re
+          import shutil
+          import struct
+          import zipfile
+          from datetime import datetime, timezone
+
+          root = pathlib.Path(".")
+          request = json.loads((root / "build-request.json").read_text(encoding="utf-8"))
+          base_version = str(request.get("base_version", "10.2.5")).strip()
+          version = str(request["version"]).strip()
+          browser_version = str(request.get("browser_version", "2.1")).strip()
+          notes = str(request.get("notes", "")).strip()
+          published_at = str(request.get("published_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
+
+          base_dir = root / "installers" / base_version
+          parts = sorted(base_dir.glob("part-*.b64"))
+          if not parts:
+              raise SystemExit(f"No updater chunks found for base version {base_version}")
+
+          old_installer = b"".join(base64.b64decode(p.read_text(encoding="ascii")) for p in parts)
+          marker = b"FIRSTSEEN_PAYLOAD_V1"
+          if len(old_installer) < len(marker) + 8:
+              raise SystemExit("Base installer is too small")
+          payload_len = struct.unpack("<Q", old_installer[-8:])[0]
+          marker_start = len(old_installer) - 8 - payload_len - len(marker)
+          if marker_start < 0 or old_installer[marker_start:marker_start + len(marker)] != marker:
+              raise SystemExit("Could not locate FirstSeen payload marker in base installer")
+          stub = old_installer[:marker_start]
+          payload_zip = old_installer[marker_start + len(marker):marker_start + len(marker) + payload_len]
+
+          work = root / ".patch-build"
+          if work.exists():
+              shutil.rmtree(work)
+          work.mkdir()
+          payload_dir = work / "payload"
+          payload_dir.mkdir()
+
+          with zipfile.ZipFile(io.BytesIO(payload_zip), "r") as zf:
+              zf.extractall(payload_dir)
+
+          text_exts = {".ps1",".bat",".cmd",".js",".mjs",".cjs",".json",".html",".htm",".css",".txt",".md",".yml",".yaml",".php"}
+          version_replacements = 0
+          for path in payload_dir.rglob("*"):
+              if not path.is_file() or path.suffix.lower() not in text_exts:
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except UnicodeDecodeError:
+                  continue
+              if base_version in text:
+                  count = text.count(base_version)
+                  text = text.replace(base_version, version)
+                  path.write_text(text, encoding="utf-8")
+                  version_replacements += count
+
+          browser_files = []
+          for path in payload_dir.rglob("*.html"):
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except UnicodeDecodeError:
+                  continue
+              if "Browser CRM V2.0" in text and "function callScript(l)" in text and "function renderCallDock(l)" in text:
+                  browser_files.append(path)
+
+          if not browser_files:
+              raise SystemExit("Could not find Browser CRM V2.0 inside the installer payload")
+
+          new_call_script = r'''  function callSpecificReason(l){
+    if(!l.website)return 'you don’t appear to have a dedicated website listed';
+    const auditReason=(l.auditReasons||[]).find(Boolean);
+    if(auditReason){
+      const reason=String(auditReason).trim().replace(/[.!?]+$/,'');
+      return reason?reason.charAt(0).toLowerCase()+reason.slice(1):'there may be an opportunity to improve how customers find and contact you online';
+    }
+    if((l.websiteQuality||'').toLowerCase().includes('poor'))return 'your website looks like it could make it easier for customers to understand what you do and get in touch';
+    if(l.rating&&Number(l.reviews||0)>=20)return `you’ve built a strong Google reputation with ${l.reviews} reviews, and I wanted to see how well your website is turning that visibility into enquiries`;
+    return 'I wanted to see how well your online presence is turning local searches into enquiries';
+  }
+  function callScript(l){
+    return `Hey, is this ${l.business}? Harvey here from FirstSeen. I found your business online and noticed ${callSpecificReason(l)}. I build websites for local businesses, and I think I could help. I’m just looking to grab 10 minutes with you sometime this week and show you what I mean. Would you be open to that?`;
+  }
+  function audit(l){'''
+
+          new_call_ui = r'''  function renderCallBrief(l){
+    const reason=callSpecificReason(l);
+    const website=!l.website?'No website listed':((l.websiteQuality||'').trim()||'Website saved');
+    const reputation=l.rating?`${l.rating}★ · ${l.reviews||0} reviews`:'No Google rating saved';
+    return `<div class="call-brief"><div class="call-brief-head"><div><div class="eyebrow">Cold call script</div><strong>${esc(l.business)}</strong></div><span class="call-brief-ready">Ready to call</span></div><div class="call-brief-grid"><div><label>Business</label><span>${esc(l.business)}</span></div><div><label>Phone</label><span>${esc(normalizePhone(l.phone)||l.phone)}</span></div><div><label>Area</label><span>${esc(l.suburb||l.address||'—')}</span></div><div><label>Business type</label><span>${esc(l.category||'—')}</span></div><div><label>Website</label><span>${esc(website)}</span></div><div><label>Google</label><span>${esc(reputation)}</span></div></div><div class="call-brief-reason"><strong>Specific reason:</strong> ${esc(reason)}</div><div class="call-script-copy">${esc(callScript(l))}</div><div class="call-script-tip">Keep it short. Ask the question, then pause and let them answer.</div></div>`;
+  }
+  function renderCallDock(l){
+    const statusLabel={idle:'Ready',starting:'Starting Twilio…',ready:'Ready',dialling:'Dialling…',ringing:'Ringing…',connected:'Connected',ended:'Call ended',error:'Call error'}[voice.state]||voice.state;
+    const twilioActive=Boolean(connection.twilio); const active=Boolean(voice.call);
+    return `<div class="call-dock"><div class="call-dock-top"><div><strong>${twilioActive?'Browser call':'Call tracking'}</strong><div class="tiny">${esc(l.business)} · ${esc(normalizePhone(l.phone)||l.phone)}</div></div><div class="call-status-stack"><span class="call-state ${esc(voice.state)}">${esc(twilioActive?statusLabel:'Device dialler')}</span><div class="call-timer" id="callTimer">${callStart?'00:00':'--:--'}</div></div></div>${voice.error?`<div class="call-error">${esc(voice.error)}</div>`:''}<div class="call-controls">${twilioActive?`<button data-call-control="mute" ${active?'':'disabled'}>${voice.muted?'Unmute':'Mute'}</button><button data-call-control="keypad" ${active?'':'disabled'}>Keypad</button><button class="danger-call" data-call-control="hangup" ${active||['dialling','ringing','connected'].includes(voice.state)?'':'disabled'}>Hang up</button>`:'<span class="tiny">Twilio is not connected. FirstSeen can still open your device dialler.</span>'}</div>${voice.keypad&&active?`<div class="dtmf-grid">${['1','2','3','4','5','6','7','8','9','*','0','#'].map(d=>`<button data-dtmf="${d}">${d}</button>`).join('')}</div>`:''}<div class="call-outcome-label">Finish by choosing the call outcome</div><div class="outcome-grid">${['No Answer','Spoke To','Send Info','Follow Up','Meeting Booked','Quote Sent','Won','Lost'].map(o=>`<button data-outcome="${o}">${o}</button>`).join('')}</div></div>`;
+  }
+  function closeDrawer(){'''
+
+          extra_css = r'''
+/* Browser CRM V2.1 — lead-aware cold call script */
+.call-brief{margin:14px 0 12px;border:1px solid #d9def8;background:#f8f9ff;border-radius:12px;padding:13px}.call-brief-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.call-brief-head strong{font-size:15px}.call-brief-ready{font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.05em;background:#e7f8ef;color:#146c43;border:1px solid #c4ead6;border-radius:999px;padding:5px 8px}.call-brief-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}.call-brief-grid>div{border:1px solid #e3e6f3;background:#fff;border-radius:8px;padding:8px;min-width:0}.call-brief-grid label{display:block;color:#7a8498;font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:.04em}.call-brief-grid span{display:block;font-size:11px;font-weight:700;margin-top:3px;overflow-wrap:anywhere}.call-brief-reason{font-size:11px;line-height:1.45;margin-top:10px;color:#4b5563}.call-script-copy{margin-top:9px;background:#111827;color:#fff;border-radius:10px;padding:12px;font-size:12px;line-height:1.55}.call-script-tip{font-size:10px;color:#667085;margin-top:7px;font-weight:650}
+@media(max-width:640px){.call-brief-grid{grid-template-columns:1fr 1fr}}
+'''
+
+          for path in browser_files:
+              text = path.read_text(encoding="utf-8")
+              text = text.replace("Browser CRM V2.0", f"Browser CRM V{browser_version}")
+
+              call_pattern = re.compile(r"  function callScript\(l\)\{\n.*?\n  \}\n  function audit\(l\)\{", re.S)
+              text, n_call = call_pattern.subn(lambda m: new_call_script, text, count=1)
+              if n_call != 1:
+                  raise SystemExit(f"Could not patch callScript in {path}")
+
+              dock_pattern = re.compile(r"  function renderCallDock\(l\)\{\n.*?\n  \}\n  function closeDrawer\(\)\{", re.S)
+              text, n_dock = dock_pattern.subn(lambda m: new_call_ui, text, count=1)
+              if n_dock != 1:
+                  raise SystemExit(f"Could not patch renderCallDock in {path}")
+
+              drawer_marker = '<div class="drawer-tabs">'
+              if drawer_marker not in text:
+                  raise SystemExit(f"Could not find drawer tabs in {path}")
+              text = text.replace(drawer_marker, '${callLeadId===l.id?renderCallBrief(l):\'\'}<div class="drawer-tabs">', 1)
+
+              call_open = "openLead(id);renderDrawer();"
+              if call_open not in text:
+                  raise SystemExit(f"Could not find startCall drawer opening in {path}")
+              text = text.replace(call_open, "openLead(id);renderDrawer();el('leadDrawer').scrollTop=0;", 1)
+
+              style_marker = "</style>"
+              if style_marker not in text:
+                  raise SystemExit(f"Could not find stylesheet end in {path}")
+              text = text.replace(style_marker, extra_css + "\n</style>", 1)
+              path.write_text(text, encoding="utf-8")
+
+          browser_html = browser_files[0].read_bytes()
+
+          new_payload_io = io.BytesIO()
+          with zipfile.ZipFile(new_payload_io, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+              for path in sorted(payload_dir.rglob("*")):
+                  rel = path.relative_to(payload_dir).as_posix()
+                  if path.is_dir():
+                      zf.writestr(rel.rstrip("/") + "/", b"")
+                  else:
+                      zf.write(path, rel)
+          new_payload = new_payload_io.getvalue()
+          installer = stub + marker + new_payload + struct.pack("<Q", len(new_payload))
+
+          out = root / "release-output"
+          if out.exists():
+              shutil.rmtree(out)
+          out.mkdir()
+
+          installer_name = f"FirstSeen-Setup-{version}.exe"
+          installer_path = out / installer_name
+          installer_path.write_bytes(installer)
+
+          source_name = f"FirstSeen_Desktop_V{version.replace('.', '_')}.zip"
+          source_path = out / source_name
+          with zipfile.ZipFile(source_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+              for path in sorted(payload_dir.rglob("*")):
+                  if path.is_file():
+                      zf.write(path, path.relative_to(payload_dir).as_posix())
+
+          browser_standalone_name = f"FirstSeen_CRM_Browser_V{browser_version.replace('.', '_')}_Standalone.html"
+          browser_standalone = out / browser_standalone_name
+          browser_standalone.write_bytes(browser_html)
+          browser_zip_name = f"FirstSeen_CRM_Browser_V{browser_version.replace('.', '_')}.zip"
+          browser_zip = out / browser_zip_name
+          with zipfile.ZipFile(browser_zip, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+              zf.writestr(browser_standalone_name, browser_html)
+
+          installer_sha = hashlib.sha256(installer).hexdigest()
+          installer_size = len(installer)
+
+          install_dir = root / "installers" / version
+          if install_dir.exists():
+              shutil.rmtree(install_dir)
+          install_dir.mkdir(parents=True, exist_ok=True)
+          chunk_urls = []
+          chunk_size = 512 * 1024
+          for index, start in enumerate(range(0, installer_size, chunk_size), start=1):
+              part = installer[start:start + chunk_size]
+              name = f"part-{index:03d}.b64"
+              (install_dir / name).write_text(base64.b64encode(part).decode("ascii") + "\n", encoding="ascii")
+              chunk_urls.append(f"https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/{version}/{name}")
+
+          manifest = {
+              "version": version,
+              "encoding": "base64-chunks-v1",
+              "chunks": chunk_urls,
+              "size": installer_size,
+              "sha256": installer_sha,
+              "published_at": published_at,
+              "notes": notes
+          }
+          (root / "latest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+          (root / "release-request.json").write_text(json.dumps({
+              "status": "published",
+              "version": version,
+              "size": installer_size,
+              "sha256": installer_sha,
+              "published_at": published_at
+          }, indent=2) + "\n", encoding="utf-8")
+
+          request["status"] = "built"
+          request["size"] = installer_size
+          request["sha256"] = installer_sha
+          request["published_at"] = published_at
+          request["browser_files_patched"] = [str(p.relative_to(payload_dir)) for p in browser_files]
+          request["version_replacements"] = version_replacements
+          (root / "build-request.json").write_text(json.dumps(request, indent=2) + "\n", encoding="utf-8")
+
+          print(f"Built {installer_name}: {installer_size} bytes, {installer_sha}")
+          print(f"Patched Browser CRM files: {len(browser_files)}")
+          print(f"Desktop version replacements: {version_replacements}")
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: FirstSeen-10.2.6-release
+          path: release-output/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit patch to updater channel
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add latest.json release-request.json build-request.json installers/
+          if git diff --cached --quiet; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          VERSION="$(python -c "import json; print(json.load(open('latest.json'))['version'])")"
+          git commit -m "Publish FirstSeen Desktop v$VERSION"
+          git push
