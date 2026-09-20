@@ -183,8 +183,8 @@ jobs:
           index_text = re.sub(r'<script[^>]+src=["\\\'](?:\\./)?app\\.js(?:\\?[^"\\\']*)?["\\\'][^>]*>\\s*</script>', '', index_text, flags=re.I)
           if "</head>" not in index_text or "</body>" not in index_text:
               raise SystemExit("Browser CRM index.html is missing head/body closing tags")
-          index_text = index_text.replace("</head>", "<style>\\n" + css_text + "\\n</style>\\n</head>", 1)
-          index_text = index_text.replace("</body>", "<script>\\n" + js_text + "\\n</script>\\n</body>", 1)
+          index_text = index_text.replace("</head>", "<style>\n" + css_text + "\n</style>\n</head>", 1)
+          index_text = index_text.replace("</body>", "<script>\n" + js_text + "\n</script>\n</body>", 1)
           browser_html = index_text.encode("utf-8")
 
           new_payload_io = io.BytesIO()
