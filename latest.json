@@ -1,14 +1,14 @@
 {
-  "version": "10.2.4",
+  "version": "10.2.5",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.4/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.5/part-004.b64"
   ],
-  "size": 1632992,
-  "sha256": "9b41219dbae7c8694a84c266472c6662c18b37f91e675bb1ef0637d0027fe603",
-  "published_at": "2026-09-20T04:51:00Z",
-  "notes": "FirstSeen Desktop V10.2.4: Browser CRM V1.6 keeps the navigation sidebar pinned to the screen while the workspace scrolls. Full desktop keeps the 220px sidebar fixed, compact desktop keeps the icon sidebar fixed, and mobile keeps navigation as a sticky horizontal strip. Existing CRM, Finder decisions, SQLite data, clients and websites are preserved."
+  "size": 1654693,
+  "sha256": "ad98777d5e599900bf84803a6c064fdaf3dbf9886da125e0b7687e6248bb59bb",
+  "published_at": "2026-09-20T05:03:00Z",
+  "notes": "FirstSeen Desktop V10.2.5 bundles Browser CRM V2.0 with integrated Twilio browser calling. Any lead with a phone number can be called from anywhere in the CRM, including Want to Contact and outside the Call Queue. V2 adds Dialling/Ringing/Connected states, headset audio through Twilio Voice JS SDK 2.18.5, mute, hang up, DTMF keypad, call timer and existing CRM outcome/follow-up logging. Twilio credentials are configured inside Browser CRM Settings and stored with Windows OS-backed encryption; the browser only receives short-lived access tokens. FirstSeen can test an existing TwiML App and create/update its Voice URL after a TwiML Bin is created."
 }

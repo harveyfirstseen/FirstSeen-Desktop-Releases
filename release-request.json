@@ -1,8 +1,7 @@
 {
+  "status": "published",
   "version": "10.2.5",
-  "download_url": "https://uc0310bbbff62d78764decd678b5.dl.dropboxusercontent.com/cd/0/get/DIeR5RG-ZhQAv2FVWrs5pwtt5dk2qOrl3Nk-B-K7Rp3rNA9TrQjHJFBviTEgS8imDnimq6UvIHUa3HSptEwgJKpEx4ljTFF6UuARiXlqwaeXduArI5ENzfEOGPLeREZYRvdYb9wnD-9-FhgMmLS6_xtspg2fUL9yQ0SUVAc8PEhOmg/file?c_luid=7fe4b514",
   "size": 1654693,
   "sha256": "ad98777d5e599900bf84803a6c064fdaf3dbf9886da125e0b7687e6248bb59bb",
-  "published_at": "2026-09-20T05:03:00Z",
-  "notes": "FirstSeen Desktop V10.2.5 bundles Browser CRM V2.0 with integrated Twilio browser calling. Any lead with a phone number can be called from anywhere in the CRM, including Want to Contact and outside the Call Queue. V2 adds Dialling/Ringing/Connected states, headset audio through Twilio Voice JS SDK 2.18.5, mute, hang up, DTMF keypad, call timer and existing CRM outcome/follow-up logging. Twilio credentials are configured inside Browser CRM Settings and stored with Windows OS-backed encryption; the browser only receives short-lived access tokens. FirstSeen can test an existing TwiML App and create/update its Voice URL after a TwiML Bin is created."
+  "published_at": "2026-09-20T05:03:00Z"
 }
