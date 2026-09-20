@@ -80,28 +80,36 @@ jobs:
                   path.write_text(text, encoding="utf-8")
                   version_replacements += count
 
-          browser_files = []
-          for path in payload_dir.rglob("*.html"):
+          browser_js_files = []
+          for path in payload_dir.rglob("*.js"):
               try:
                   text = path.read_text(encoding="utf-8")
               except UnicodeDecodeError:
                   continue
-              if "Browser CRM V2.0" in text and "function callScript(l)" in text and "function renderCallDock(l)" in text:
-                  browser_files.append(path)
+              if "function callScript(l)" in text and "function renderCallDock(l)" in text and "function renderDrawer()" in text:
+                  browser_js_files.append(path)
 
-          if not browser_files:
-              print("DEBUG: Browser CRM direct search found nothing.")
-              for probe in payload_dir.rglob("*"):
-                  if probe.is_file() and probe.suffix.lower() == ".zip":
-                      print("DEBUG ZIP:", probe.relative_to(payload_dir))
-                  if probe.is_file() and probe.suffix.lower() in text_exts:
-                      try:
-                          probe_text = probe.read_text(encoding="utf-8")
-                      except UnicodeDecodeError:
-                          continue
-                      if "Browser CRM" in probe_text or "function callScript" in probe_text or "renderCallDock" in probe_text:
-                          print("DEBUG TEXT CANDIDATE:", probe.relative_to(payload_dir), "browser=", "Browser CRM" in probe_text, "callScript=", "function callScript" in probe_text, "dock=", "renderCallDock" in probe_text)
-              raise SystemExit("Could not find Browser CRM V2.0 inside the installer payload")
+          if not browser_js_files:
+              raise SystemExit("Could not find the Browser CRM JavaScript inside the installer payload")
+
+          browser_dir = browser_js_files[0].parent
+          browser_index = browser_dir / "index.html"
+          browser_css = browser_dir / "app.css"
+          if not browser_index.exists() or not browser_css.exists():
+              raise SystemExit(f"Browser CRM index.html/app.css were not found beside {browser_js_files[0]}")
+
+          # Update visible V2.0 labels only in current app source, not historical release notes.
+          app_src = payload_dir / "app" / "src"
+          if app_src.exists():
+              for path in app_src.rglob("*"):
+                  if not path.is_file() or path.suffix.lower() not in text_exts:
+                      continue
+                  try:
+                      src_text = path.read_text(encoding="utf-8")
+                  except UnicodeDecodeError:
+                      continue
+                  if "Browser CRM V2.0" in src_text:
+                      path.write_text(src_text.replace("Browser CRM V2.0", f"Browser CRM V{browser_version}"), encoding="utf-8")
 
           new_call_script = r'''  function callSpecificReason(l){
               if(!l.website)return 'you don’t appear to have a dedicated website listed';
@@ -138,10 +146,8 @@ jobs:
           @media(max-width:640px){.call-brief-grid{grid-template-columns:1fr 1fr}}
           '''
 
-          for path in browser_files:
+          for path in browser_js_files:
               text = path.read_text(encoding="utf-8")
-              text = text.replace("Browser CRM V2.0", f"Browser CRM V{browser_version}")
-
               call_pattern = re.compile(r"  function callScript\(l\)\{\n.*?\n  \}\n  function audit\(l\)\{", re.S)
               text, n_call = call_pattern.subn(lambda m: new_call_script, text, count=1)
               if n_call != 1:
@@ -162,13 +168,24 @@ jobs:
                   raise SystemExit(f"Could not find startCall drawer opening in {path}")
               text = text.replace(call_open, "openLead(id);renderDrawer();el('leadDrawer').scrollTop=0;", 1)
 
-              style_marker = "</style>"
-              if style_marker not in text:
-                  raise SystemExit(f"Could not find stylesheet end in {path}")
-              text = text.replace(style_marker, extra_css + "\n</style>", 1)
               path.write_text(text, encoding="utf-8")
 
-          browser_html = browser_files[0].read_bytes()
+          css_text = browser_css.read_text(encoding="utf-8")
+          if "lead-aware cold call script" not in css_text:
+              css_text = css_text.rstrip() + "\n\n" + extra_css.strip() + "\n"
+              browser_css.write_text(css_text, encoding="utf-8")
+
+          # Build a clean standalone Browser CRM V2.1 from the same modular source bundled in Desktop.
+          index_text = browser_index.read_text(encoding="utf-8").replace("Browser CRM V2.0", f"Browser CRM V{browser_version}")
+          js_text = browser_js_files[0].read_text(encoding="utf-8")
+          css_text = browser_css.read_text(encoding="utf-8")
+          index_text = re.sub(r'<link[^>]+href=["\\\'](?:\\./)?app\\.css(?:\\?[^"\\\']*)?["\\\'][^>]*>', '', index_text, flags=re.I)
+          index_text = re.sub(r'<script[^>]+src=["\\\'](?:\\./)?app\\.js(?:\\?[^"\\\']*)?["\\\'][^>]*>\\s*</script>', '', index_text, flags=re.I)
+          if "</head>" not in index_text or "</body>" not in index_text:
+              raise SystemExit("Browser CRM index.html is missing head/body closing tags")
+          index_text = index_text.replace("</head>", "<style>\\n" + css_text + "\\n</style>\\n</head>", 1)
+          index_text = index_text.replace("</body>", "<script>\\n" + js_text + "\\n</script>\\n</body>", 1)
+          browser_html = index_text.encode("utf-8")
 
           new_payload_io = io.BytesIO()
           with zipfile.ZipFile(new_payload_io, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
@@ -242,12 +259,12 @@ jobs:
           request["size"] = installer_size
           request["sha256"] = installer_sha
           request["published_at"] = published_at
-          request["browser_files_patched"] = [str(p.relative_to(payload_dir)) for p in browser_files]
+          request["browser_files_patched"] = [str(p.relative_to(payload_dir)) for p in browser_js_files] + [str(browser_css.relative_to(payload_dir)), str(browser_index.relative_to(payload_dir))]
           request["version_replacements"] = version_replacements
           (root / "build-request.json").write_text(json.dumps(request, indent=2) + "\n", encoding="utf-8")
 
           print(f"Built {installer_name}: {installer_size} bytes, {installer_sha}")
-          print(f"Patched Browser CRM files: {len(browser_files)}")
+          print(f"Patched Browser CRM JavaScript files: {len(browser_js_files)}")
           print(f"Desktop version replacements: {version_replacements}")
 
       - name: Upload release artifacts
