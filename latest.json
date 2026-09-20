@@ -1,14 +1,14 @@
 {
-  "version": "10.2.0",
+  "version": "10.2.1",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.0/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-004.b64"
   ],
-  "size": 1608486,
-  "sha256": "65cf3bdc7d1509863a41795fb338b3c4995c13fa818422d9768764a8451d7346",
-  "published_at": "2026-09-19T15:00:00Z",
-  "notes": "FirstSeen Desktop V10.2.0: adds Sales Mode with an automatically ranked Call Queue, live lead qualification and business-specific call reasons/scripts, automatic follow-up scheduling, website audit, one-click sales demo creation/opening, follow-up email drafting/sending, proposal handoff, a full sales pipeline, call/conversation/meeting/quote/win metrics, average won value, source and industry conversion analytics, plus discovery questions and a 10-minute meeting guide. Existing CRM, sales, website, client, schedule, AppData and SQLite data are preserved."
+  "size": 1623176,
+  "sha256": "68a03fcfc0958069b4143fbabab2db03c01a71c4af695e5735652cfbcd6ab2fc",
+  "published_at": "2026-09-20T02:41:00Z",
+  "notes": "FirstSeen Desktop V10.2.1: adds a live Browser CRM bridge. Open Browser CRM directly from Desktop and it loads the same local SQLite leads automatically, with no bundled old/demo leads and no CSV import step. Browser lead creation, notes, pipeline changes, follow-ups and call outcomes write back to the Desktop CRM. Includes Browser CRM V1.3 and the secure server-side integration boundary for future Twilio browser calling."
 }
