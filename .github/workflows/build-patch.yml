@@ -90,6 +90,17 @@ jobs:
                   browser_files.append(path)
 
           if not browser_files:
+              print("DEBUG: Browser CRM direct search found nothing.")
+              for probe in payload_dir.rglob("*"):
+                  if probe.is_file() and probe.suffix.lower() == ".zip":
+                      print("DEBUG ZIP:", probe.relative_to(payload_dir))
+                  if probe.is_file() and probe.suffix.lower() in text_exts:
+                      try:
+                          probe_text = probe.read_text(encoding="utf-8")
+                      except UnicodeDecodeError:
+                          continue
+                      if "Browser CRM" in probe_text or "function callScript" in probe_text or "renderCallDock" in probe_text:
+                          print("DEBUG TEXT CANDIDATE:", probe.relative_to(payload_dir), "browser=", "Browser CRM" in probe_text, "callScript=", "function callScript" in probe_text, "dock=", "renderCallDock" in probe_text)
               raise SystemExit("Could not find Browser CRM V2.0 inside the installer payload")
 
           new_call_script = r'''  function callSpecificReason(l){
