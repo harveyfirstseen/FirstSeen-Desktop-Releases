@@ -38,12 +38,12 @@ jobs:
           request = json.loads((root / "build-request.json").read_text(encoding="utf-8"))
           base_version = str(request["base_version"]).strip()
           version = str(request["version"]).strip()
-          browser_version = str(request.get("browser_version", "2.4")).strip()
+          browser_version = str(request.get("browser_version", "2.5")).strip()
           notes = str(request.get("notes", "")).strip()
           published_at = str(request.get("published_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
 
-          if version != "10.2.9":
-              raise SystemExit("This patch builder currently targets FirstSeen Desktop 10.2.9 only.")
+          if version != "10.2.10":
+              raise SystemExit("This patch builder currently targets FirstSeen Desktop 10.2.10 only.")
 
           base_dir = root / "installers" / base_version
           parts = sorted(base_dir.glob("part-*.b64"))
@@ -68,7 +68,7 @@ jobs:
           with zipfile.ZipFile(io.BytesIO(payload_zip), "r") as zf:
               zf.extractall(payload_dir)
 
-          runpy.run_path(str(root / "patches" / "v10_2_9.py"), init_globals={"payload_dir": payload_dir, "version": version, "browser_version": browser_version})
+          runpy.run_path(str(root / "patches" / "v10_2_10.py"), init_globals={"payload_dir": payload_dir, "version": version, "browser_version": browser_version})
 
           browser_dir = payload_dir / "app" / "src" / "browser-crm"
           index_path = browser_dir / "index.html"
@@ -160,7 +160,7 @@ jobs:
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FirstSeen-10.2.9-release
+          name: FirstSeen-10.2.10-release
           path: release-output/*
           if-no-files-found: error
           retention-days: 30
