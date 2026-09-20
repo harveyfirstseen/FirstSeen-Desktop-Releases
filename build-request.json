@@ -3,5 +3,6 @@
   "base_version": "10.2.6",
   "version": "10.2.7",
   "browser_version": "2.2",
-  "notes": "FirstSeen Desktop V10.2.7 bundles Browser CRM V2.2. Pressing Call on any lead now opens the finalized FirstSeen cold-call script in its own fixed panel on the left side of the browser, separate from the lead drawer and Twilio controls. The selected business name, phone, area, specific reason for calling and website issue are filled in automatically. The script uses the same easy-read format as the finalized cold-calling script chat: clear spoken blocks, separators, uppercase objection headings and short YES/NO/callback action cues. Existing Twilio browser calling, outcomes, follow-ups, Finder shortlist, live SQLite CRM data and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.2.7 bundles Browser CRM V2.2. Pressing Call on any lead now opens the finalized FirstSeen cold-call script in its own fixed panel on the left side of the browser, separate from the lead drawer and Twilio controls. The selected business name, phone, area, specific reason for calling and website issue are filled in automatically. The script uses the same easy-read format as the finalized cold-calling script chat: clear spoken blocks, separators, uppercase objection headings and short YES/NO/callback action cues. Existing Twilio browser calling, outcomes, follow-ups, Finder shortlist, live SQLite CRM data and updater behaviour are preserved.",
+  "retry": 1
 }
