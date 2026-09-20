@@ -1,14 +1,14 @@
 {
-  "version": "10.2.1",
+  "version": "10.2.2",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.1/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.2/part-004.b64"
   ],
-  "size": 1623176,
-  "sha256": "68a03fcfc0958069b4143fbabab2db03c01a71c4af695e5735652cfbcd6ab2fc",
-  "published_at": "2026-09-20T02:41:00Z",
-  "notes": "FirstSeen Desktop V10.2.1: adds a live Browser CRM bridge. Open Browser CRM directly from Desktop and it loads the same local SQLite leads automatically, with no bundled old/demo leads and no CSV import step. Browser lead creation, notes, pipeline changes, follow-ups and call outcomes write back to the Desktop CRM. Includes Browser CRM V1.3 and the secure server-side integration boundary for future Twilio browser calling."
+  "size": 1634086,
+  "sha256": "f7fea6455fa6b449ea3139b7f6b4f694c918fdf65bdf49c3fe9aaab2d0458f34",
+  "published_at": "2026-09-20T03:37:00Z",
+  "notes": "FirstSeen Desktop V10.2.2: Business Finder now collects more cold-call context from Google Places, including business status, opening hours/open-now data and service-area signals. Browser CRM V1.4 adds a dedicated Call Intel view, live Refresh Call Intel for Google-linked leads, stronger business-specific openers and answer-likelihood guidance, plus Call Any Lead so any saved lead with a phone number can be called even when it is not in the Call Queue. Pipeline cards now also expose direct Call actions."
 }

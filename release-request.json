@@ -1,8 +1,7 @@
 {
+  "status": "published",
   "version": "10.2.2",
-  "download_url": "https://uc68b7505e0bf58553fc5088fdce.dl.dropboxusercontent.com/cd/0/get/DIeGktmttuHB5zLTgGeo93GAPW4HkOVEebrzGXNDPDJhKBuDsJ5CN1o8ZWhL8n5U9fgd9NTMmLi-ggdw2kOJCLYqeMqNMlcKkbsVsOyxp0Z9svo8utK55JzCjRWONUDSytmaMYfh3oUAow1p_zjfhf3amf1YeF9Bp4rTDi9r57-I8A/file?c_luid=7fe4b514",
   "size": 1634086,
   "sha256": "f7fea6455fa6b449ea3139b7f6b4f694c918fdf65bdf49c3fe9aaab2d0458f34",
-  "published_at": "2026-09-20T03:37:00Z",
-  "notes": "FirstSeen Desktop V10.2.2: Business Finder now collects more cold-call context from Google Places, including business status, opening hours/open-now data and service-area signals. Browser CRM V1.4 adds a dedicated Call Intel view, live Refresh Call Intel for Google-linked leads, stronger business-specific openers and answer-likelihood guidance, plus Call Any Lead so any saved lead with a phone number can be called even when it is not in the Call Queue. Pipeline cards now also expose direct Call actions."
+  "published_at": "2026-09-20T03:37:00Z"
 }
