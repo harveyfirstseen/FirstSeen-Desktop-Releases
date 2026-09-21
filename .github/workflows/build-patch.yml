@@ -38,7 +38,7 @@ jobs:
           request = json.loads((root / "build-request.json").read_text(encoding="utf-8"))
           base_version = str(request["base_version"]).strip()
           version = str(request["version"]).strip()
-          browser_version = str(request.get("browser_version", "3.1")).strip()
+          browser_version = str(request.get("browser_version", "3.2")).strip()
           notes = str(request.get("notes", "")).strip()
           published_at = str(request.get("published_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
 
@@ -68,7 +68,7 @@ jobs:
           with zipfile.ZipFile(io.BytesIO(payload_zip), "r") as zf:
               zf.extractall(payload_dir)
 
-          patch_names = [f"v10_2_16f.part-{i:03d}.b64" for i in range(1,6)]
+          patch_names = [f"v10_2_17.part-{i:03d}.b64" for i in range(1,5)]
           patch_b64 = "".join((root / "patches" / name).read_text(encoding="ascii").strip() for name in patch_names)
           patch_file = work / "v10_2_12.py"
           patch_file.write_bytes(base64.b64decode(patch_b64))
@@ -164,7 +164,7 @@ jobs:
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FirstSeen-10.2.16-release
+          name: FirstSeen-10.2.17-release
           path: release-output/*
           if-no-files-found: error
           retention-days: 30
