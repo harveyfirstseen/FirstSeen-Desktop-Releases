@@ -1,7 +1,10 @@
 {
-  "status": "requested",
+  "status": "built",
   "base_version": "10.3.0",
   "version": "10.3.1",
   "browser_version": "4.1",
-  "notes": "FirstSeen Desktop V10.3.1 bundles Browser CRM V4.1 and hardens the live Supabase CRM sync. Supabase remains the shared CRM source while Desktop SQLite is the local mirror/cache. Desktop writes now read the existing cloud row first so cloud-only fields such as contact name, full address, Google Maps URL, opening hours and service-area data are preserved instead of being blanked by normal Desktop edits. Pipeline drag-and-drop uses the same cloud-aware update path in Desktop and hosted/phone mode, and Sync Now is available in hosted/phone mode after Supabase sign-in. Existing two-way sync, messaging, Twilio calling, Finder, call scripts, summaries, SQLite data and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.3.1 bundles Browser CRM V4.1 and hardens the live Supabase CRM sync. Supabase remains the shared CRM source while Desktop SQLite is the local mirror/cache. Desktop writes now read the existing cloud row first so cloud-only fields such as contact name, full address, Google Maps URL, opening hours and service-area data are preserved instead of being blanked by normal Desktop edits. Pipeline drag-and-drop uses the same cloud-aware update path in Desktop and hosted/phone mode, and Sync Now is available in hosted/phone mode after Supabase sign-in. Existing two-way sync, messaging, Twilio calling, Finder, call scripts, summaries, SQLite data and updater behaviour are preserved.",
+  "size": 1678776,
+  "sha256": "462b811f2b6147886a55b8f878bbecc21bb06da8ea9c2a8421e481820e331812",
+  "published_at": "2026-09-21T09:11:28.131195Z"
 }
