@@ -1,14 +1,14 @@
 {
-  "version": "10.3.1",
+  "version": "10.3.2",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.1/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.1/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.1/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.1/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.2/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.2/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.2/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.2/part-004.b64"
   ],
-  "size": 1678776,
-  "sha256": "462b811f2b6147886a55b8f878bbecc21bb06da8ea9c2a8421e481820e331812",
-  "published_at": "2026-09-21T09:11:28.131195Z",
-  "notes": "FirstSeen Desktop V10.3.1 bundles Browser CRM V4.1 and hardens the live Supabase CRM sync. Supabase remains the shared CRM source while Desktop SQLite is the local mirror/cache. Desktop writes now read the existing cloud row first so cloud-only fields such as contact name, full address, Google Maps URL, opening hours and service-area data are preserved instead of being blanked by normal Desktop edits. Pipeline drag-and-drop uses the same cloud-aware update path in Desktop and hosted/phone mode, and Sync Now is available in hosted/phone mode after Supabase sign-in. Existing two-way sync, messaging, Twilio calling, Finder, call scripts, summaries, SQLite data and updater behaviour are preserved."
+  "size": 1679904,
+  "sha256": "c969d65d897e4a3eb1fc5ee97a1003b6d7418f853f39737b2fe80bc1969cf283",
+  "published_at": "2026-09-21T09:29:20.922858Z",
+  "notes": "FirstSeen Desktop V10.3.2 bundles Browser CRM V4.2. Want to Contact is now visually nested under Leads and uses the same Supabase-synced full CRM records as the main Leads view. Uncontacted CRM leads appear there automatically and use the same drawer, calls, messages, notes, status changes and follow-ups across Desktop and phone. Finder shortlist businesses that have not yet become full CRM leads are retained in a separate secondary section and deduplicated against full CRM leads. Existing Supabase two-way sync, SQLite mirror/cache, Twilio calling, messaging, Finder, call scripts, summaries and updater behaviour are preserved."
 }
