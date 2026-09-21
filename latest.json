@@ -1,14 +1,14 @@
 {
-  "version": "10.2.14",
+  "version": "10.2.15",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.14/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.14/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.14/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.14/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.15/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.15/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.15/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.15/part-004.b64"
   ],
-  "size": 1665685,
-  "sha256": "fd46bbaeb6e1b9a6ff5bf63dd75b8a456777cac327200502239abe30c4481e1a",
-  "published_at": "2026-09-21T01:07:39.411861Z",
-  "notes": "FirstSeen Desktop V10.2.14 bundles Browser CRM V2.9 and replaces the existing cold-call script with the latest FirstSeen cold-call delivery guide. The new guide includes delivery cues for pace and pauses, the full objection flow, No Answer / Voicemail, and Delivery Rules, while keeping lead-specific business name, call reason, website issue, business summary and review snapshot integration. The replacement guide uses a fresh script-save namespace so older saved templates do not override it; previous saved data remains untouched in the old namespace. Existing script editing/saving, Twilio browser calling, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
+  "size": 1668340,
+  "sha256": "f67c911e46bdde51ff8a5dc82cfab5a9024a8a89d07268eee06866f2d9a055f8",
+  "published_at": "2026-09-21T06:21:12.956156Z",
+  "notes": "FirstSeen Desktop V10.2.15 bundles Browser CRM V3.0 and adds personalised editable lead messaging. A Message button now sits beside callable leads across the CRM and in the lead drawer. Drafts use the same lead-specific reason as the call script but replace the 10-minute meeting ask with a low-pressure invitation to view the FirstSeen website and contact Harvey by email. Messages never send automatically: they open in an editable modal first, can be copied, and Open Messages hands the final draft to the device SMS composer. Settings now stores the public FirstSeen website and email; the known public email defaults to hello@firstseendigital.com.au while the website is left for the user to set so the app never invents a domain. Default drafts include a Reply STOP opt-out line. Existing cold-call scripts and saving, Twilio calling, outcomes, follow-ups, Finder shortlist, business summaries, SQLite CRM data and updater behaviour are preserved."
 }
