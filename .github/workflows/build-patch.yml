@@ -68,10 +68,7 @@ jobs:
           with zipfile.ZipFile(io.BytesIO(payload_zip), "r") as zf:
               zf.extractall(payload_dir)
 
-          patch_names = [f"v10_3_4s.part-{i:03d}.b64" for i in range(1,3)]
-          patch_b64 = "".join((root / "patches" / name).read_text(encoding="ascii").strip() for name in patch_names)
-          patch_file = work / "v10_2_12.py"
-          patch_file.write_bytes(base64.b64decode(patch_b64))
+          patch_file = root / "patches" / "v10_3_4.py"
           runpy.run_path(str(patch_file), init_globals={"payload_dir": payload_dir, "version": version, "browser_version": browser_version})
 
           browser_dir = payload_dir / "app" / "src" / "browser-crm"
