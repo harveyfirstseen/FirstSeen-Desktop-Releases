@@ -1,7 +1,10 @@
 {
-  "status": "requested",
+  "status": "built",
   "base_version": "10.3.2",
   "version": "10.3.3",
   "browser_version": "4.3",
-  "notes": "FirstSeen Desktop V10.3.3 bundles Browser CRM V4.3 and automatically promotes every current Finder business marked 👍 Lead into the full CRM before Supabase sync. Promoted Finder leads retain Google Place ID, phone, public email, website, rating/review count, address context and business summary where available. Existing CRM records are linked instead of duplicated when FirstSeen can match them by Google Place ID, phone, email, or business name plus area. After promotion they use the same Supabase-synced CRM records as all other leads, so they can be called and messaged from Desktop and phone. Want to Contact now displays only full CRM records. Existing Supabase two-way sync, SQLite mirror/cache, Twilio calling, messaging, Finder, call scripts, summaries and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.3.3 bundles Browser CRM V4.3 and automatically promotes every current Finder business marked \ud83d\udc4d Lead into the full CRM before Supabase sync. Promoted Finder leads retain Google Place ID, phone, public email, website, rating/review count, address context and business summary where available. Existing CRM records are linked instead of duplicated when FirstSeen can match them by Google Place ID, phone, email, or business name plus area. After promotion they use the same Supabase-synced CRM records as all other leads, so they can be called and messaged from Desktop and phone. Want to Contact now displays only full CRM records. Existing Supabase two-way sync, SQLite mirror/cache, Twilio calling, messaging, Finder, call scripts, summaries and updater behaviour are preserved.",
+  "size": 1681001,
+  "sha256": "af80b3196053d3e07b357a09f9d1af2bad2a9571f515877004f9bcc07d0bc8b0",
+  "published_at": "2026-09-21T09:46:08.979205Z"
 }
