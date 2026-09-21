@@ -1,11 +1,7 @@
 {
-  "status": "built",
-  "base_version": "10.2.15",
-  "version": "10.2.16",
-  "browser_version": "3.1",
-  "notes": "FirstSeen Desktop V10.2.16 bundles Browser CRM V3.1 and adds the first real Supabase Cloud CRM connection step. Settings now accepts the Supabase Project URL and browser-safe publishable key locally, rejects secret/service-role keys, and provides GitHub OAuth sign-in from FirstSeen. Browser CRM prefers http://localhost:3210/ so Supabase can use a stable local redirect URL, with an available-port fallback if needed. A read-only Test cloud leads action authenticates as the signed-in user and reads the Supabase leads table through Row Level Security, showing the visible cloud lead count and recent lead names. This version deliberately does not upload, overwrite, merge or delete existing Desktop SQLite leads; full sync remains disabled until the read-only connection is verified. Existing lead messaging, cold-call scripts, Twilio calling, outcomes, follow-ups, Finder shortlist, business summaries, SQLite CRM data and updater behaviour are preserved.",
-  "retry": 2,
-  "size": 1671507,
-  "sha256": "2b3292546ac56076acd9ebc32b155b217326c26714f10e8d39d301b165af5890",
-  "published_at": "2026-09-21T07:57:58.984909Z"
+  "status": "requested",
+  "base_version": "10.2.16",
+  "version": "10.2.17",
+  "browser_version": "3.2",
+  "notes": "FirstSeen Desktop V10.2.17 bundles Browser CRM V3.2 and begins the safe Desktop ↔ Supabase sync plan with a strictly read-only sync preview. The new Preview Desktop ↔ Cloud action compares real Desktop SQLite CRM leads with the signed-in user's Supabase leads through Row Level Security, using Google Place ID, phone, email, website and business/suburb signals. It reports matched leads, matched records with differences, Desktop-only leads, cloud-only leads and same-name records needing manual review, with sample names for inspection. This release does not insert, update, merge, overwrite or delete lead rows in SQLite or Supabase, so existing Desktop data remains untouched while the real dataset is assessed before write-enabled sync is introduced. Existing cloud login, messaging, call scripts, Twilio calling, Finder, summaries, SQLite CRM data and updater behaviour are preserved."
 }
