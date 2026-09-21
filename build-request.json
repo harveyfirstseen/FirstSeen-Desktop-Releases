@@ -1,7 +1,10 @@
 {
-  "status": "requested",
+  "status": "built",
   "base_version": "10.2.13",
   "version": "10.2.14",
   "browser_version": "2.9",
-  "notes": "FirstSeen Desktop V10.2.14 bundles Browser CRM V2.9 and replaces the existing cold-call script with the latest FirstSeen cold-call delivery guide. The new guide includes delivery cues for pace and pauses, the full objection flow, No Answer / Voicemail, and Delivery Rules, while keeping lead-specific business name, call reason, website issue, business summary and review snapshot integration. The replacement guide uses a fresh script-save namespace so older saved templates do not override it; previous saved data remains untouched in the old namespace. Existing script editing/saving, Twilio browser calling, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.2.14 bundles Browser CRM V2.9 and replaces the existing cold-call script with the latest FirstSeen cold-call delivery guide. The new guide includes delivery cues for pace and pauses, the full objection flow, No Answer / Voicemail, and Delivery Rules, while keeping lead-specific business name, call reason, website issue, business summary and review snapshot integration. The replacement guide uses a fresh script-save namespace so older saved templates do not override it; previous saved data remains untouched in the old namespace. Existing script editing/saving, Twilio browser calling, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved.",
+  "size": 1665685,
+  "sha256": "fd46bbaeb6e1b9a6ff5bf63dd75b8a456777cac327200502239abe30c4481e1a",
+  "published_at": "2026-09-21T01:07:39.411861Z"
 }
