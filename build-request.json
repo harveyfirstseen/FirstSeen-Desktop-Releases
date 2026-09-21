@@ -1,10 +1,7 @@
 {
-  "status": "built",
-  "base_version": "10.2.14",
-  "version": "10.2.15",
-  "browser_version": "3.0",
-  "notes": "FirstSeen Desktop V10.2.15 bundles Browser CRM V3.0 and adds personalised editable lead messaging. A Message button now sits beside callable leads across the CRM and in the lead drawer. Drafts use the same lead-specific reason as the call script but replace the 10-minute meeting ask with a low-pressure invitation to view the FirstSeen website and contact Harvey by email. Messages never send automatically: they open in an editable modal first, can be copied, and Open Messages hands the final draft to the device SMS composer. Settings now stores the public FirstSeen website and email; the known public email defaults to hello@firstseendigital.com.au while the website is left for the user to set so the app never invents a domain. Default drafts include a Reply STOP opt-out line. Existing cold-call scripts and saving, Twilio calling, outcomes, follow-ups, Finder shortlist, business summaries, SQLite CRM data and updater behaviour are preserved.",
-  "size": 1668340,
-  "sha256": "f67c911e46bdde51ff8a5dc82cfab5a9024a8a89d07268eee06866f2d9a055f8",
-  "published_at": "2026-09-21T06:21:12.956156Z"
+  "status": "requested",
+  "base_version": "10.2.15",
+  "version": "10.2.16",
+  "browser_version": "3.1",
+  "notes": "FirstSeen Desktop V10.2.16 bundles Browser CRM V3.1 and adds the first real Supabase Cloud CRM connection step. Settings now accepts the Supabase Project URL and browser-safe publishable key locally, rejects secret/service-role keys, and provides GitHub OAuth sign-in from FirstSeen. Browser CRM prefers http://localhost:3210/ so Supabase can use a stable local redirect URL, with an available-port fallback if needed. A read-only Test cloud leads action authenticates as the signed-in user and reads the Supabase leads table through Row Level Security, showing the visible cloud lead count and recent lead names. This version deliberately does not upload, overwrite, merge or delete existing Desktop SQLite leads; full sync remains disabled until the read-only connection is verified. Existing lead messaging, cold-call scripts, Twilio calling, outcomes, follow-ups, Finder shortlist, business summaries, SQLite CRM data and updater behaviour are preserved."
 }
