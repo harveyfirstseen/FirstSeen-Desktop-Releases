@@ -1,14 +1,14 @@
 {
-  "version": "10.2.17",
+  "version": "10.3.0",
   "encoding": "base64-chunks-v1",
   "chunks": [
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.17/part-001.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.17/part-002.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.17/part-003.b64",
-    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.2.17/part-004.b64"
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.0/part-001.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.0/part-002.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.0/part-003.b64",
+    "https://raw.githubusercontent.com/harveyfirstseen/FirstSeen-Desktop-Releases/main/installers/10.3.0/part-004.b64"
   ],
-  "size": 1674243,
-  "sha256": "5a5a548b703bff01467be88ec1b45f2d6e3d6fe1e168e87add39acf3245cb355",
-  "published_at": "2026-09-21T08:32:24.212495Z",
-  "notes": "FirstSeen Desktop V10.2.17 bundles Browser CRM V3.2 and begins the safe Desktop \u2194 Supabase sync plan with a strictly read-only sync preview. The new Preview Desktop \u2194 Cloud action compares real Desktop SQLite CRM leads with the signed-in user's Supabase leads through Row Level Security, using Google Place ID, phone, email, website and business/suburb signals. It reports matched leads, matched records with differences, Desktop-only leads, cloud-only leads and same-name records needing manual review, with sample names for inspection. This release does not insert, update, merge, overwrite or delete lead rows in SQLite or Supabase, so existing Desktop data remains untouched while the real dataset is assessed before write-enabled sync is introduced. Existing cloud login, messaging, call scripts, Twilio calling, Finder, summaries, SQLite CRM data and updater behaviour are preserved."
+  "size": 1678098,
+  "sha256": "d627cb785657119ba319d53a118c3511e82e84a6c6cc3b87e795ded4f0aca113",
+  "published_at": "2026-09-21T09:05:45.556600Z",
+  "notes": "FirstSeen Desktop V10.3.0 bundles Browser CRM V4.0 and makes Supabase the shared CRM source for leads. Existing Desktop SQLite remains a local mirror/cache. On startup and every 15 seconds while active, Desktop-only leads upload to Supabase, cloud-only leads mirror into Desktop, and same-ID changes resolve by updated_at. Existing Desktop UUIDs are reused in Supabase. Browser CRM edits, notes, summaries, pipeline changes, follow-ups, call outcomes and new leads write through to Supabase; hosted/standalone Browser CRM can use the same cloud leads after GitHub sign-in. Rich FirstSeen metadata is stored under website_audit.firstseen so the current Supabase schema can be used without a destructive migration. Existing Twilio calling, messaging, Finder, call scripts, summaries, SQLite data and updater behaviour are preserved."
 }

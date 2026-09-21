@@ -1,7 +1,10 @@
 {
-  "status": "requested",
+  "status": "built",
   "base_version": "10.2.17",
   "version": "10.3.0",
   "browser_version": "4.0",
-  "notes": "FirstSeen Desktop V10.3.0 bundles Browser CRM V4.0 and makes Supabase the shared CRM source for leads. Existing Desktop SQLite remains a local mirror/cache. On startup and every 15 seconds while active, Desktop-only leads upload to Supabase, cloud-only leads mirror into Desktop, and same-ID changes resolve by updated_at. Existing Desktop UUIDs are reused in Supabase. Browser CRM edits, notes, summaries, pipeline changes, follow-ups, call outcomes and new leads write through to Supabase; hosted/standalone Browser CRM can use the same cloud leads after GitHub sign-in. Rich FirstSeen metadata is stored under website_audit.firstseen so the current Supabase schema can be used without a destructive migration. Existing Twilio calling, messaging, Finder, call scripts, summaries, SQLite data and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.3.0 bundles Browser CRM V4.0 and makes Supabase the shared CRM source for leads. Existing Desktop SQLite remains a local mirror/cache. On startup and every 15 seconds while active, Desktop-only leads upload to Supabase, cloud-only leads mirror into Desktop, and same-ID changes resolve by updated_at. Existing Desktop UUIDs are reused in Supabase. Browser CRM edits, notes, summaries, pipeline changes, follow-ups, call outcomes and new leads write through to Supabase; hosted/standalone Browser CRM can use the same cloud leads after GitHub sign-in. Rich FirstSeen metadata is stored under website_audit.firstseen so the current Supabase schema can be used without a destructive migration. Existing Twilio calling, messaging, Finder, call scripts, summaries, SQLite data and updater behaviour are preserved.",
+  "size": 1678098,
+  "sha256": "d627cb785657119ba319d53a118c3511e82e84a6c6cc3b87e795ded4f0aca113",
+  "published_at": "2026-09-21T09:05:45.556600Z"
 }
