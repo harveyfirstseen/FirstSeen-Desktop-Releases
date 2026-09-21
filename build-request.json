@@ -1,8 +1,11 @@
 {
-  "status": "requested",
+  "status": "built",
   "base_version": "10.2.16",
   "version": "10.2.17",
   "browser_version": "3.2",
-  "notes": "FirstSeen Desktop V10.2.17 bundles Browser CRM V3.2 and begins the safe Desktop ↔ Supabase sync plan with a strictly read-only sync preview. The new Preview Desktop ↔ Cloud action compares real Desktop SQLite CRM leads with the signed-in user's Supabase leads through Row Level Security, using Google Place ID, phone, email, website and business/suburb signals. It reports matched leads, matched records with differences, Desktop-only leads, cloud-only leads and same-name records needing manual review, with sample names for inspection. This release does not insert, update, merge, overwrite or delete lead rows in SQLite or Supabase, so existing Desktop data remains untouched while the real dataset is assessed before write-enabled sync is introduced. Existing cloud login, messaging, call scripts, Twilio calling, Finder, summaries, SQLite CRM data and updater behaviour are preserved.",
-  "retry": 1
+  "notes": "FirstSeen Desktop V10.2.17 bundles Browser CRM V3.2 and begins the safe Desktop \u2194 Supabase sync plan with a strictly read-only sync preview. The new Preview Desktop \u2194 Cloud action compares real Desktop SQLite CRM leads with the signed-in user's Supabase leads through Row Level Security, using Google Place ID, phone, email, website and business/suburb signals. It reports matched leads, matched records with differences, Desktop-only leads, cloud-only leads and same-name records needing manual review, with sample names for inspection. This release does not insert, update, merge, overwrite or delete lead rows in SQLite or Supabase, so existing Desktop data remains untouched while the real dataset is assessed before write-enabled sync is introduced. Existing cloud login, messaging, call scripts, Twilio calling, Finder, summaries, SQLite CRM data and updater behaviour are preserved.",
+  "retry": 1,
+  "size": 1674243,
+  "sha256": "5a5a548b703bff01467be88ec1b45f2d6e3d6fe1e168e87add39acf3245cb355",
+  "published_at": "2026-09-21T08:32:24.212495Z"
 }
