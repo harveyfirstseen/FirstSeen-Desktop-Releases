@@ -1,10 +1,7 @@
 {
-  "status": "built",
-  "base_version": "10.2.12",
-  "version": "10.2.13",
-  "browser_version": "2.8",
-  "notes": "FirstSeen Desktop V10.2.13 bundles Browser CRM V2.8. Business summaries are more detailed, using richer service descriptions, service-area context and website-presence context. Existing V10.2.12 auto-generated summaries are upgraded automatically while manually edited summaries are preserved. New leads receive the richer summary format automatically. To use review information conservatively, FirstSeen shows a separate live Google Maps review snapshot with the aggregate star rating and review count plus a source link when available; raw Google review text is not copied into or stored in FirstSeen summaries. Existing Twilio browser calling, editable call scripts, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved.",
-  "size": 1664437,
-  "sha256": "573828a1276d7011b3146e658d82d4d9078d16e1b8edf616b6f4232b4da41697",
-  "published_at": "2026-09-20T23:08:28.316512Z"
+  "status": "requested",
+  "base_version": "10.2.13",
+  "version": "10.2.14",
+  "browser_version": "2.9",
+  "notes": "FirstSeen Desktop V10.2.14 bundles Browser CRM V2.9 and replaces the existing cold-call script with the latest FirstSeen cold-call delivery guide. The new guide includes delivery cues for pace and pauses, the full objection flow, No Answer / Voicemail, and Delivery Rules, while keeping lead-specific business name, call reason, website issue, business summary and review snapshot integration. The replacement guide uses a fresh script-save namespace so older saved templates do not override it; previous saved data remains untouched in the old namespace. Existing script editing/saving, Twilio browser calling, outcomes, follow-ups, Finder shortlist, SQLite CRM data and updater behaviour are preserved."
 }
