@@ -1,10 +1,7 @@
 {
-  "status": "built",
-  "base_version": "10.3.1",
-  "version": "10.3.2",
-  "browser_version": "4.2",
-  "notes": "FirstSeen Desktop V10.3.2 bundles Browser CRM V4.2. Want to Contact is now visually nested under Leads and uses the same Supabase-synced full CRM records as the main Leads view. Uncontacted CRM leads appear there automatically and use the same drawer, calls, messages, notes, status changes and follow-ups across Desktop and phone. Finder shortlist businesses that have not yet become full CRM leads are retained in a separate secondary section and deduplicated against full CRM leads. Existing Supabase two-way sync, SQLite mirror/cache, Twilio calling, messaging, Finder, call scripts, summaries and updater behaviour are preserved.",
-  "size": 1679904,
-  "sha256": "c969d65d897e4a3eb1fc5ee97a1003b6d7418f853f39737b2fe80bc1969cf283",
-  "published_at": "2026-09-21T09:29:20.922858Z"
+  "status": "requested",
+  "base_version": "10.3.2",
+  "version": "10.3.3",
+  "browser_version": "4.3",
+  "notes": "FirstSeen Desktop V10.3.3 bundles Browser CRM V4.3 and automatically promotes every current Finder business marked 👍 Lead into the full CRM before Supabase sync. Promoted Finder leads retain Google Place ID, phone, public email, website, rating/review count, address context and business summary where available. Existing CRM records are linked instead of duplicated when FirstSeen can match them by Google Place ID, phone, email, or business name plus area. After promotion they use the same Supabase-synced CRM records as all other leads, so they can be called and messaged from Desktop and phone. Want to Contact now displays only full CRM records. Existing Supabase two-way sync, SQLite mirror/cache, Twilio calling, messaging, Finder, call scripts, summaries and updater behaviour are preserved."
 }
