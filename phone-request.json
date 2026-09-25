@@ -1,0 +1,6 @@
+{
+  "status": "requested",
+  "base_version": "10.3.5",
+  "browser_version": "4.3",
+  "purpose": "Build isolated phone HTML with native SMS handoff; do not modify Desktop updater or data paths."
+}
