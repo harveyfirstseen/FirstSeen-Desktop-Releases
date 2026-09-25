@@ -1,0 +1,13 @@
+{
+  "status": "requested",
+  "source": "Browser CRM V4.3 extracted from Desktop V10.3.5",
+  "output": "phone/FirstSeen_CRM_Phone_V1.html",
+  "change": "Message button opens native SMS app immediately with existing personalised draft.",
+  "guardrails": [
+    "Do not modify Desktop V10.3.5",
+    "Do not modify updater",
+    "Do not modify SQLite schema/data",
+    "Do not modify Supabase sync",
+    "Do not modify Finder, Want to Contact, Twilio, call scripts, summaries or clients"
+  ]
+}
