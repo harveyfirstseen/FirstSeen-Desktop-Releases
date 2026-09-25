@@ -88,6 +88,14 @@ jobs:
               raise SystemExit("regression check failed: "+", ".join(missing))
           print("Phone V1 HTML built and syntax checked")
 
+      - name: Upload phone HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: FirstSeen-CRM-Phone-V1
+          path: phone/FirstSeen_CRM_Phone_V1.html
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Commit phone HTML
         run: |
           git config user.name "github-actions[bot]"
