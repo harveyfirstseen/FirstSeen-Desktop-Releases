@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FirstSeen CRM V4.3</title>
+  <link rel="stylesheet" href="./app.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">F</div><div><strong>FirstSeen</strong><span>CRM</span></div></div>
+      <nav id="nav" class="nav"></nav>
+      <div class="sidebar-foot"><button id="settingsBtn" class="ghost-btn">Settings</button><div class="version">Browser CRM V4.3</div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow" id="pageEyebrow">Sales workspace</div>
+          <h1 id="pageTitle">Leads</h1>
+        </div>
+        <div class="top-actions">
+          <div class="search-wrap"><input id="searchInput" type="search" placeholder="Search businesses, suburb, phone, notes…" /></div>
+          <button id="startCallingBtn" class="primary-btn">Start Calling</button>
+          <button id="quickCallBtn" class="secondary-btn">Call Any Lead</button>
+          <button id="addLeadBtn" class="secondary-btn">+ Add Lead</button>
+        </div>
+      </header>
+
+      <section id="workspace" class="workspace"></section>
+    </main>
+  </div>
+
+  <aside id="callScriptPanel" class="call-script-panel hidden"></aside>
+
+  <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
+  <aside id="leadDrawer" class="lead-drawer hidden"></aside>
+
+  <div id="modalBackdrop" class="modal-backdrop hidden"></div>
+  <div id="modal" class="modal hidden"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
