@@ -10,6 +10,6 @@
     "Do not modify Supabase sync",
     "Do not modify Finder, Want to Contact, Twilio, call scripts, summaries or clients"
   ],
-  "retry": 4,
-  "note": "Retry after fixing generated JavaScript newlines."
+  "retry": 5,
+  "note": "Build verified phone HTML and upload it as a downloadable artifact."
 }
