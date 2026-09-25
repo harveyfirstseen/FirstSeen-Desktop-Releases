@@ -9,5 +9,7 @@
     "Do not modify SQLite schema/data",
     "Do not modify Supabase sync",
     "Do not modify Finder, Want to Contact, Twilio, call scripts, summaries or clients"
-  ]
+  ],
+  "retry": 1,
+  "note": "Retry after fixing phone-only build script quoting."
 }
