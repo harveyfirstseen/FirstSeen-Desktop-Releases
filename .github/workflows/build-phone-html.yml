@@ -42,7 +42,7 @@ jobs:
           helper = """  function openNativeMessages(id){
     const l=leadById(id);
     if(!l)return;
-    if(!l.phone)return alert(\`No phone number is saved for \${l.business}.\`);
+    if(!l.phone)return alert(`No phone number is saved for ${l.business}.`);
     const body=outreachMessage(l);
     location.href=smsHref(l.phone,body);
   }
