@@ -33,7 +33,16 @@ jobs:
           app = work / "app.js"
           s = app.read_text(encoding="utf-8")
           anchor = "  function messageModal(id){\n"
-          helper = "  function openNativeMessages(id){\\n    const l=leadById(id);\\n    if(!l)return;\\n    if(!l.phone)return alert(\`No phone number is saved for \${l.business}.\`);\\n    const body=outreachMessage(l);\\n    location.href=smsHref(l.phone,body);\\n  }\\n"
+          helper = "\n".join([
+              "  function openNativeMessages(id){",
+              "    const l=leadById(id);",
+              "    if(!l)return;",
+              "    if(!l.phone)return alert('No phone number is saved for '+l.business+'.');",
+              "    const body=outreachMessage(l);",
+              "    location.href=smsHref(l.phone,body);",
+              "  }",
+              ""
+          ])
           if anchor not in s:
               raise SystemExit("message modal anchor missing")
           s = s.replace(anchor, helper + anchor, 1)
