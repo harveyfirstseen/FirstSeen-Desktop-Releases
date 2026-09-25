@@ -1,0 +1,140 @@
+name: Build FirstSeen Phone HTML
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - phone-build-request.json
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  build-phone:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release channel
+        uses: actions/checkout@v4
+
+      - name: Build isolated phone HTML
+        shell: python
+        run: |
+          import json, pathlib, re, shutil, subprocess
+          root = pathlib.Path(".")
+          req = json.loads((root / "phone-build-request.json").read_text(encoding="utf-8"))
+          src = root / "phone-source" / "v4.3"
+          if not src.exists():
+              raise SystemExit("Browser CRM V4.3 source export is missing")
+
+          work = root / ".phone-build"
+          if work.exists():
+              shutil.rmtree(work)
+          work.mkdir()
+          for name in ["index.html", "app.css", "app.js"]:
+              shutil.copy2(src / name, work / name)
+
+          app = work / "app.js"
+          s = app.read_text(encoding="utf-8")
+
+          anchor = "  function messageModal(id){\n"
+          helper = """  function openNativeMessages(id){
+    const l=leadById(id);
+    if(!l)return;
+    if(!l.phone)return alert(\`No phone number is saved for \${l.business}.\`);
+    const body=outreachMessage(l);
+    location.href=smsHref(l.phone,body);
+  }
+"""
+          if anchor not in s:
+              raise SystemExit("messageModal anchor not found")
+          s = s.replace(anchor, helper + anchor, 1)
+
+          old = "    document.querySelectorAll('[data-message]').forEach(b=>b.onclick=e=>{e.stopPropagation();messageModal(b.dataset.message)});"
+          new = "    document.querySelectorAll('[data-message]').forEach(b=>b.onclick=e=>{e.stopPropagation();openNativeMessages(b.dataset.message)});"
+          if old not in s:
+              raise SystemExit("main message handler anchor not found")
+          s = s.replace(old, new, 1)
+
+          old = "    document.querySelectorAll('#leadDrawer [data-message]').forEach(b=>b.onclick=()=>messageModal(b.dataset.message));"
+          new = "    document.querySelectorAll('#leadDrawer [data-message]').forEach(b=>b.onclick=()=>openNativeMessages(b.dataset.message));"
+          if old not in s:
+              raise SystemExit("drawer message handler anchor not found")
+          s = s.replace(old, new, 1)
+
+          app.write_text(s, encoding="utf-8")
+          subprocess.run(["node", "--check", str(app)], check=True)
+
+          html = (work / "index.html").read_text(encoding="utf-8")
+          css = (work / "app.css").read_text(encoding="utf-8")
+          js = app.read_text(encoding="utf-8")
+          html = re.sub(r'<link[^>]+href=["\'](?:\./)?app\.css["\'][^>]*>', '', html, flags=re.I)
+          html = re.sub(r'<script[^>]+src=["\'](?:\./)?app\.js["\'][^>]*>\s*</script>', '', html, flags=re.I)
+          html = html.replace("</head>", "<style>\n" + css + "\n</style>\n</head>", 1)
+          html = html.replace("</body>", "<script>\n" + js + "\n</script>\n</body>", 1)
+          html = html.replace("FirstSeen CRM V4.3", "FirstSeen CRM Phone V1", 1)
+          html = html.replace("Browser CRM V4.3", "Phone CRM V1 · Browser core V4.3", 1)
+
+          out = root / "phone"
+          out.mkdir(exist_ok=True)
+          target = out / "FirstSeen_CRM_Phone_V1.html"
+          target.write_text(html, encoding="utf-8")
+
+          # Basic regression assertions: direct Message -> native SMS and original two-step modal still remains available in source.
+          final = target.read_text(encoding="utf-8")
+          checks = [
+              "function openNativeMessages(id)",
+              "location.href=smsHref(l.phone,body)",
+              "openNativeMessages(b.dataset.message)",
+              "function smsHref(phone,body)",
+              "function outreachMessage(l)"
+          ]
+          missing = [x for x in checks if x not in final]
+          if missing:
+              raise SystemExit("Phone HTML regression check failed: " + ", ".join(missing))
+
+          req["status"] = "built"
+          req["output"] = "phone/FirstSeen_CRM_Phone_V1.html"
+          req["desktop_version_untouched"] = "10.3.5"
+          req["browser_source"] = "4.3"
+          (root / "phone-build-request.json").write_text(json.dumps(req, indent=2) + "\n", encoding="utf-8")
+
+      - name: Upload phone HTML artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FirstSeen-Phone-V1
+          path: phone/FirstSeen_CRM_Phone_V1.html
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Record artifact id
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, urllib.request
+          repo=os.environ["GITHUB_REPOSITORY"]; run=os.environ["GITHUB_RUN_ID"]
+          req=urllib.request.Request(
+              f"https://api.github.com/repos/{repo}/actions/runs/{run}/artifacts",
+              headers={"Authorization":f"Bearer {os.environ['GH_TOKEN']}","Accept":"application/vnd.github+json"}
+          )
+          with urllib.request.urlopen(req) as r:
+              data=json.load(r)
+          artifact=next((a for a in data.get("artifacts",[]) if a.get("name")=="FirstSeen-Phone-V1"),None)
+          status={"status":"built","run_id":int(run),"artifact_id":artifact.get("id") if artifact else None,"artifact_name":"FirstSeen-Phone-V1"}
+          pathlib.Path("phone-build-status.json").write_text(json.dumps(status,indent=2)+"\n",encoding="utf-8")
+          PY
+
+      - name: Commit phone HTML
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add phone/FirstSeen_CRM_Phone_V1.html phone-build-request.json phone-build-status.json
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "Build FirstSeen CRM Phone V1 native SMS handoff"
+          git push
