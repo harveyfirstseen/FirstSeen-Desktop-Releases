@@ -1,7 +1,10 @@
 {
-  "status": "requested",
+  "status": "built",
   "base_version": "10.3.4",
   "version": "10.3.5",
   "browser_version": "4.3",
-  "notes": "FirstSeen Desktop V10.3.5 fixes the Remove Client → Lead button for accidental client conversions. V10.3.4 used a transaction helper that Node's built-in SQLite DatabaseSync does not provide, so the rollback failed. V10.3.5 uses explicit SQLite BEGIN/COMMIT/ROLLBACK, keeps the original CRM lead, removes only the accidental Client conversion, restores the lead's pre-Won stage from its timeline where possible, and immediately opens Leads after success. Errors such as linked payment/schedule data are now shown visibly instead of making the button appear unresponsive. Existing Supabase lead sync, Browser CRM V4.3, messaging, Twilio, Finder, websites and updater behaviour are preserved."
+  "notes": "FirstSeen Desktop V10.3.5 fixes the Remove Client \u2192 Lead button for accidental client conversions. V10.3.4 used a transaction helper that Node's built-in SQLite DatabaseSync does not provide, so the rollback failed. V10.3.5 uses explicit SQLite BEGIN/COMMIT/ROLLBACK, keeps the original CRM lead, removes only the accidental Client conversion, restores the lead's pre-Won stage from its timeline where possible, and immediately opens Leads after success. Errors such as linked payment/schedule data are now shown visibly instead of making the button appear unresponsive. Existing Supabase lead sync, Browser CRM V4.3, messaging, Twilio, Finder, websites and updater behaviour are preserved.",
+  "size": 1683041,
+  "sha256": "b9d1f48729ac7e392f544c44edf38bcb33ce876b11cabb8c6bb156c8689ff0a1",
+  "published_at": "2026-09-25T02:23:18.957618Z"
 }
