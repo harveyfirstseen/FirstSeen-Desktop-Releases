@@ -1,0 +1,67 @@
+name: Export FirstSeen Browser CRM Source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - phone-request.json
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release channel
+        uses: actions/checkout@v4
+
+      - name: Extract Browser CRM V4.3 from Desktop V10.3.5
+        shell: python
+        run: |
+          import base64, io, json, pathlib, shutil, struct, zipfile
+          root = pathlib.Path(".")
+          req = json.loads((root / "phone-request.json").read_text(encoding="utf-8"))
+          base_version = str(req.get("base_version", "10.3.5"))
+          browser_version = str(req.get("browser_version", "4.3"))
+          parts = sorted((root / "installers" / base_version).glob("part-*.b64"))
+          if not parts:
+              raise SystemExit("Base installer chunks not found")
+          installer = b"".join(base64.b64decode(p.read_text(encoding="ascii")) for p in parts)
+          marker = b"FIRSTSEEN_PAYLOAD_V1"
+          payload_len = struct.unpack("<Q", installer[-8:])[0]
+          marker_start = len(installer) - 8 - payload_len - len(marker)
+          if marker_start < 0 or installer[marker_start:marker_start+len(marker)] != marker:
+              raise SystemExit("FirstSeen payload marker not found")
+          payload_zip = installer[marker_start+len(marker):marker_start+len(marker)+payload_len]
+          work = root / ".phone-export"
+          if work.exists():
+              shutil.rmtree(work)
+          work.mkdir()
+          with zipfile.ZipFile(io.BytesIO(payload_zip), "r") as zf:
+              zf.extractall(work)
+          src = work / "app" / "src" / "browser-crm"
+          if not src.exists():
+              raise SystemExit("Browser CRM source not found in payload")
+          out = root / "phone-source" / f"v{browser_version}"
+          if out.exists():
+              shutil.rmtree(out)
+          out.mkdir(parents=True)
+          for name in ["index.html", "app.css", "app.js"]:
+              shutil.copy2(src / name, out / name)
+          req["status"] = "exported"
+          req["source_path"] = f"phone-source/v{browser_version}"
+          (root / "phone-request.json").write_text(json.dumps(req, indent=2) + "\n", encoding="utf-8")
+
+      - name: Commit extracted Browser CRM source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add phone-source/ phone-request.json
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "Export Browser CRM v4.3 source for phone build"
+          git push
