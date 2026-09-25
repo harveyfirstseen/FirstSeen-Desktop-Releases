@@ -1,11 +1,7 @@
 {
-  "status": "built",
-  "base_version": "10.3.3",
-  "version": "10.3.4",
+  "status": "requested",
+  "base_version": "10.3.4",
+  "version": "10.3.5",
   "browser_version": "4.3",
-  "notes": "FirstSeen Desktop V10.3.4 adds a Back to Lead option to each Desktop Client card for accidental client conversions. It removes the Client record while keeping the linked Lead and restoring the stage it had before Add as Client marked it Won. Future conversions remember both the native Lead stage and Browser CRM sales stage; older conversions fall back to the Lead timeline. The shortcut refuses to run when real client delivery, sales, payment, portal, hosting, SEO, feedback, file, handoff or other linked client data exists, so established client work is not silently orphaned. Add as Client now keeps stage and sales_stage aligned at Won, and rollback restores both so the existing Supabase sync reflects the change. Browser CRM remains V4.3 and existing leads, projects, websites, Supabase sync, messaging, Twilio, Finder and updater behaviour are preserved.",
-  "retry": 1,
-  "size": 1682329,
-  "sha256": "a357771ff709f8b3784ae4ad971c5af99a672a8f2fd7a8b1994b834381036b01",
-  "published_at": "2026-09-21T10:07:42.990095Z"
+  "notes": "FirstSeen Desktop V10.3.5 fixes the Remove Client → Lead button for accidental client conversions. V10.3.4 used a transaction helper that Node's built-in SQLite DatabaseSync does not provide, so the rollback failed. V10.3.5 uses explicit SQLite BEGIN/COMMIT/ROLLBACK, keeps the original CRM lead, removes only the accidental Client conversion, restores the lead's pre-Won stage from its timeline where possible, and immediately opens Leads after success. Errors such as linked payment/schedule data are now shown visibly instead of making the button appear unresponsive. Existing Supabase lead sync, Browser CRM V4.3, messaging, Twilio, Finder, websites and updater behaviour are preserved."
 }
